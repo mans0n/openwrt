@@ -607,6 +607,17 @@ config ATH79_MACH_DRAGINO2
 	select ATH79_DEV_ETH
 	select ATH79_DEV_USB
 
+config ATH79_MACH_DW02_412H
+	bool "kt DW02-412H support"
+	select SOC_QCA955X
+	select ATH79_DEV_ETH
+	select ATH79_DEV_GPIO_BUTTONS
+	select ATH79_DEV_LEDS_GPIO
+	select ATH79_DEV_M25P80
+	select ATH79_DEV_NFC
+	select ATH79_DEV_USB
+	select ATH79_DEV_WMAC
+
 config ATH79_MACH_E2100L
 	bool "Linksys E2100L board support"
 	select SOC_AR913X

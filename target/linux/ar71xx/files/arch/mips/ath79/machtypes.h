@@ -86,6 +86,7 @@ enum ath79_mach_type {
 	ATH79_MACH_DR344,			/* Wallys DR344 */
 	ATH79_MACH_DR531,			/* Wallys DR531 */
 	ATH79_MACH_DRAGINO2,			/* Dragino Version 2 */
+	ATH79_MACH_DW02_412H,			/* kt DW02-412H */
 	ATH79_MACH_EAP120,			/* TP-LINK EAP120 */
 	ATH79_MACH_EAP300V2,			/* EnGenius EAP300 v2 */
 	ATH79_MACH_EAP7660D,			/* Senao EAP7660D */

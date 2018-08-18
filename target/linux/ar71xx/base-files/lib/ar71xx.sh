@@ -594,6 +594,9 @@ ar71xx_board_detect() {
 	*"Domino Pi")
 		name="gl-domino"
 		;;
+	*"DW02-412H")
+		name="dw02-412h"
+		;;
 	*"DW33D")
 		name="dw33d"
 		;;

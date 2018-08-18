@@ -480,6 +480,10 @@ ar71xx_setup_macs()
 		lan_mac=$(mtd_get_mac_binary caldata 0)
 		wan_mac=$(mtd_get_mac_binary caldata 6)
 		;;
+	dw02-412h)
+		wan_mac=$(mtd_get_mac_binary art 6)
+		lan_mac=$(macaddr_add "$wan_mac" 1)
+		;;
 	tl-wr1043nd-v4)
 		lan_mac=$(mtd_get_mac_binary product-info 8)
 		wan_mac=$(macaddr_add "$lan_mac" 1)
