@@ -24,18 +24,33 @@ define Device/domywifi-dw33d
 endef
 TARGET_DEVICES += domywifi-dw33d
 
+# based on the olleh.sh script by @manatails
+# See: https://manatails.net/blog/2018/01/kt-무선-공유기-커스텀-펌웨어-개발기/
+define Build/dw-header
+  dd if=$@ of=$@.new bs=1 count=4
+  echo -ne '\x00\x00\x00\x00\x00\x03\x00\x00' | dd of=$@.new bs=1 seek=4 conv=notrunc
+  dd if=$@ of=$@.new bs=1 count=56 skip=8 seek=12 conv=notrunc
+  crc32 $@.new | xxd -r -p | dd of=$@.new bs=1 seek=4 conv=notrunc
+  dd if=$@ of=$@.new bs=4k skip=64 iflag=skip_bytes oflag=append conv=notrunc
+  mv $@.new $@
+endef
+
 define Device/dw02-412h
   DEVICE_TITLE := kt DW02-412H
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-storage kmod-ath10k ath10k-firmware-qca988x
   BOARDNAME = DW02-412H
   CONSOLE = ttyS0,115200
-  # BLOCKSIZE := 64k
-  # KERNEL_SIZE = 3648k
-  # IMAGE_SIZE = 32m
-  # IMAGES := sysupgrade.bin
-  MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,64k(log)ro,896k(recovery-kernel)ro,576k(recovery-rootfs)ro,64k(nvram)ro,64k(nvram-backup)ro,64k(art)ro;ar934x-nfc:16m(kernel-backup)ro,-(firmware)ro
-  KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma
-  # IMAGE/sysupgrade.bin = append-rootfs | pad-rootfs | pad-to 14528k | append-kernel | check-size $$$$(IMAGE_SIZE)
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_SIZE = 5120k
+  IMAGE_SIZE = 16m  # 112m
+  # UBINIZE_OPTS := -E 5
+  MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,64k(log)ro,896k(recovery-kernel)ro,576k(recovery-rootfs)ro,64k(nvram)ro,64k(nvram-backup)ro,64k(art)ro;ar934x-nfc:16m(kernel-backup)ro,5m(kernel),11m(ubi),96m(etc)ro,16m@0x1000000(firmware)
+  KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma | dw-header
+  IMAGES := sysupgrade.tar factory.bin
+  # IMAGE/sysupgrade.bin = append-kernel | pad-to $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
+  IMAGE/factory.bin := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | check-size $$$$(IMAGE_SIZE)
+  IMAGE/sysupgrade.tar := sysupgrade-tar
 endef
 TARGET_DEVICES += dw02-412h
 
