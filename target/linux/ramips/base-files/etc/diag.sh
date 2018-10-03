@@ -195,6 +195,9 @@ get_status_led() {
 	hc5962)
 		status_led="$boardname:white:status"
 		;;
+	iptime,a604m)
+		status_led="$boardname:blue:cpu"
+		;;
 	linkits7688)
 		status_led="linkit-smart-7688:orange:wifi"
 		;;

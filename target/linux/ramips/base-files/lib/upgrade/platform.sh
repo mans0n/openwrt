@@ -78,6 +78,7 @@ platform_check_image() {
 	hw550-3g|\
 	iodata,wn-gx300gr|\
 	ip2202|\
+	iptime,a604m|\
 	jhr-n805r|\
 	jhr-n825r|\
 	jhr-n926r|\

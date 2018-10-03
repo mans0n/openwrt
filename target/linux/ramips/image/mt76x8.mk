@@ -57,6 +57,15 @@ define Device/hc5661a
 endef
 TARGET_DEVICES += hc5661a
 
+define Device/iptime_a604m
+  DTS := A604M
+  BLOCKSIZE := 64k
+  IMAGE_SIZE := 7936k
+  UIMAGE_NAME := a604m
+  DEVICE_TITLE := EFM ipTIME A604M
+endef
+TARGET_DEVICES += iptime_a604m
+
 define Device/LinkIt7688
   DTS := LINKIT7688
   IMAGE_SIZE := $(ralink_default_fw_size_32M)
