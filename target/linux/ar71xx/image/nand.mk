@@ -42,14 +42,12 @@ define Device/dw02-412h
   CONSOLE = ttyS0,115200
   BLOCKSIZE := 128k
   PAGESIZE := 2048
-  KERNEL_SIZE = 5120k
-  IMAGE_SIZE = 16m  # 112m
-  # UBINIZE_OPTS := -E 5
-  MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,64k(log)ro,896k(recovery-kernel)ro,576k(recovery-rootfs)ro,64k(nvram)ro,64k(nvram-backup)ro,64k(art)ro;ar934x-nfc:16m(kernel-backup)ro,5m(kernel),11m(ubi),96m(etc)ro,16m@0x1000000(firmware)
+  KERNEL_SIZE = 2048k
+  IMAGE_SIZE = 128m
+  UIMAGE_NAME := ISQ-4000
+  MTDPARTS = spi0.0:256k(u-boot)ro,64k(u-boot-env)ro,64k(log)ro,896k(recovery-kernel)ro,576k(recovery-rootfs)ro,64k(nvram)ro,64k(nvram-backup)ro,64k(art)ro;ar934x-nfc:2048k(kernel),-(ubi)
   KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma | dw-header
-  IMAGES := sysupgrade.tar factory.bin
-  # IMAGE/sysupgrade.bin = append-kernel | pad-to $$$$(BLOCKSIZE) | append-rootfs | pad-rootfs | check-size $$$$(IMAGE_SIZE)
-  IMAGE/factory.bin := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | check-size $$$$(IMAGE_SIZE)
+  IMAGES := sysupgrade.tar
   IMAGE/sysupgrade.tar := sysupgrade-tar
 endef
 TARGET_DEVICES += dw02-412h

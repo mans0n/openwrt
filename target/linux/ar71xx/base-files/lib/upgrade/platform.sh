@@ -478,6 +478,7 @@ platform_check_image() {
 		return $?
 		;;
 	c-60|\
+	dw02-412h|\
 	nbg6716|\
 	r6100|\
 	wndr3700v4|\
@@ -612,6 +613,7 @@ platform_pre_upgrade() {
 		;;
 	rb*|\
 	c-60|\
+	dw02-412h|\
 	nbg6716|\
 	r6100|\
 	wndr3700v4|\

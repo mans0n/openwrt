@@ -195,6 +195,10 @@ dragino2)
 	ucidef_set_led_netdev "lan" "LAN" "$board:red:lan" "eth0"
 	ucidef_set_led_netdev "wan" "WAN" "$board:red:wan" "eth1"
 	;;
+dw02-412h)
+	ucidef_set_led_switch "wan" "WAN" "$board:green:wan" "switch0" "0x02"
+	ucidef_set_led_netdev "wifi" "WIFI" "$board:green:wifi" "wlan0"
+	;;
 dw33d)
 	ucidef_set_led_usbdev "mmc" "MMC" "$board:blue:mmc" "1-1"
 	ucidef_set_led_usbdev "usb" "USB" "$board:blue:usb" "2-1"

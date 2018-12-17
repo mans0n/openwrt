@@ -158,6 +158,7 @@ ar71xx_setup_interfaces()
 	ap132|\
 	ap136|\
 	ap152|\
+	dw02-412h|\
 	rb-750gl|\
 	rb-751g|\
 	rb-951g-2hnd|\

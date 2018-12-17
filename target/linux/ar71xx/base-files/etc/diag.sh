@@ -160,6 +160,9 @@ get_status_led() {
 	oolite)
 		status_led="$board:red:system"
 		;;
+	dw02-412h)
+		status_led="$board:green:wifi"
+		;;
 	dw33d)
 		status_led="$board:blue:status"
 		;;
