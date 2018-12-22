@@ -57,6 +57,15 @@ define Device/hc5661a
 endef
 TARGET_DEVICES += hc5661a
 
+define Device/iptime_a3
+  DTS := A3
+  BLOCKSIZE := 64k
+  IMAGE_SIZE := 7936k
+  UIMAGE_NAME := a3
+  DEVICE_TITLE := EFM ipTIME A3
+endef
+TARGET_DEVICES += iptime_a3
+
 define Device/iptime_a604m
   DTS := A604M
   BLOCKSIZE := 64k
