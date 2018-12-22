@@ -14,6 +14,25 @@
 		reg = <0x0 0x4000000>;
 	};
 
+	gpio-keys-polled {
+		compatible = "gpio-keys-polled";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		poll-interval = <20>;
+
+		reset {
+			label = "reset";
+			gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+		};
+
+		wps {
+			label = "wps";
+			gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_WPS_BUTTON>;
+		};
+	};
+
 	gpio-leds {
 		compatible = "gpio-leds";
 
@@ -32,23 +51,29 @@
 			gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;
 		};
 	};
+};
 
-	gpio-keys-polled {
-		compatible = "gpio-keys-polled";
-		#address-cells = <1>;
-		#size-cells = <0>;
-		poll-interval = <20>;
+&ehci {
+	status = "disabled";
+};
 
-		reset {
-			label = "reset";
-			gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_RESTART>;
-		};
+&ethernet {
+	mtd-mac-address = <&factory 0x4>;
+};
 
-		wps {
-			label = "wps";
-			gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_WPS_BUTTON>;
+&ohci {
+	status = "disabled";
+};
+
+&pcie {
+	status = "okay";
+
+	pcie-bridge {
+		mt76@1,0 {
+			reg = <0x0000 0 0 0 0>;
+			device_type = "pci";
+			mediatek,mtd-eeprom = <&factory 0x8000>;
+			ieee80211-freq-limit = <5000000 6000000>;
 		};
 	};
 };
@@ -94,31 +119,6 @@
 		partition@40000 {
 			label = "firmware";
 			reg = <0x40000 0x7c0000>;
-		};
-	};
-};
-
-&ehci {
-	status = "disabled";
-};
-
-&ohci {
-	status = "disabled";
-};
-
-&ethernet {
-	mtd-mac-address = <&factory 0x4>;
-};
-
-&pcie {
-	status = "okay";
-
-	pcie-bridge {
-		mt76@1,0 {
-			reg = <0x0000 0 0 0 0>;
-			device_type = "pci";
-			mediatek,mtd-eeprom = <&factory 0x8000>;
-			ieee80211-freq-limit = <5000000 6000000>;
 		};
 	};
 };
