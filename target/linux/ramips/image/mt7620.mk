@@ -284,6 +284,16 @@ define Device/hc5861
 endef
 TARGET_DEVICES += hc5861
 
+define Device/iptime_a104ns
+  DTS := A104NS
+  BLOCKSIZE := 64k
+  IMAGE_SIZE := 8000k
+  UIMAGE_NAME := a104ns
+  DEVICE_TITLE := EFM ipTIME A104ns
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport
+endef
+TARGET_DEVICES += iptime_a104ns
+
 define Device/kng_rc
   DTS := kng_rc
   IMAGE_SIZE := $(ralink_default_fw_size_16M)

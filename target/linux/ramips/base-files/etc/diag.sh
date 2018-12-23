@@ -195,6 +195,7 @@ get_status_led() {
 	hc5962)
 		status_led="$boardname:white:status"
 		;;
+	iptime,a104ns|\
 	iptime,a3|\
 	iptime,a604m)
 		status_led="$boardname:blue:cpu"
