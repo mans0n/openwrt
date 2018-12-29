@@ -9,36 +9,17 @@
 	compatible = "iptime,a104ns", "ralink,mt7620a-soc";
 	model = "EFM ipTIME A104ns";
 
-	gpio-keys-polled {
-		compatible = "gpio-keys-polled";
-		#address-cells = <1>;
-		#size-cells = <0>;
-		poll-interval = <20>;
-
-		reset {
-			label = "reset";
-			gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_RESTART>;
-		};
-
-		wps {
-			label = "wps";
-			gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_WPS_BUTTON>;
-		};
-	};
-
 	gpio-leds {
 		compatible = "gpio-leds";
-
-		cpu {
-			label = "a104ns:blue:cpu";
-			gpios = <&gpio1 15 GPIO_ACTIVE_LOW>;
-		};
 
 		usb {
 			label = "a104ns:blue:usb";
 			gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+		};
+
+		cpu {
+			label = "a104ns:blue:cpu";
+			gpios = <&gpio1 15 GPIO_ACTIVE_LOW>;
 		};
 
 		wlan2g {
@@ -46,15 +27,25 @@
 			gpios = <&gpio3 0 GPIO_ACTIVE_LOW>;
 		};
 	};
-};
 
-&ehci {
-	status = "okay";
-};
+	gpio-keys-polled {
+		compatible = "gpio-keys-polled";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		poll-interval = <20>;
 
-&ethernet {
-	mtd-mac-address = <&factory 0xc20>;
-	mtd-mac-address-increment = <1>;
+		wps {
+			label = "wps";
+			gpios = <&gpio0 12 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_WPS_BUTTON>;
+		};
+
+		reset {
+			label = "reset";
+			gpios = <&gpio0 13 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+		};
+	};
 };
 
 &gpio0 {
@@ -67,33 +58,6 @@
 
 &gpio3 {
 	status = "okay";
-};
-
-&ohci {
-	status = "okay";
-};
-
-&pcie {
-	status = "okay";
-
-	/* MT7610EN is not supported by mt76 on OpenWrt 18.06.1! */
-	pcie-bridge {
-		mt76@1,0 {
-			reg = <0x0000 0 0 0 0>;
-			device_type = "pci";
-			mediatek,mtd-eeprom = <&factory 0x800>;
-			ieee80211-freq-limit = <5000000 6000000>;
-		};
-	};
-};
-
-&pinctrl {
-	state_default: pinctrl0 {
-		gpio {
-			ralink,group = "uartf", "spi refclk", "wled";
-			ralink,function = "gpio";
-		};
-	};
 };
 
 &spi0 {
@@ -127,6 +91,42 @@
 		partition@30000 {
 			label = "firmware";
 			reg = <0x30000 0x7d0000>;
+		};
+	};
+};
+
+&pinctrl {
+	state_default: pinctrl0 {
+		gpio {
+			ralink,group = "uartf", "spi refclk", "wled";
+			ralink,function = "gpio";
+		};
+	};
+};
+
+&ethernet {
+	mtd-mac-address = <&factory 0xc20>;
+	mtd-mac-address-increment = <1>;
+};
+
+&ehci {
+	status = "okay";
+};
+
+&ohci {
+	status = "okay";
+};
+
+&pcie {
+	status = "okay";
+
+	/* MT7610EN is not supported by mt76 on OpenWrt 18.06.1! */
+	pcie-bridge {
+		mt76@1,0 {
+			reg = <0x0000 0 0 0 0>;
+			device_type = "pci";
+			mediatek,mtd-eeprom = <&factory 0x800>;
+			ieee80211-freq-limit = <5000000 6000000>;
 		};
 	};
 };

@@ -14,6 +14,25 @@
 		reg = <0x0 0x4000000>;
 	};
 
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		wlan5g {
+			label = "a604m:blue:wlan5g";
+			gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;
+		};
+
+		cpu {
+			label = "a604m:blue:cpu";
+			gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+		};
+
+		wlan2g {
+			label = "a604m:blue:wlan2g";
+			gpios = <&gpio1 14 GPIO_ACTIVE_LOW>;
+		};
+	};
+
 	gpio-keys-polled {
 		compatible = "gpio-keys-polled";
 		#address-cells = <1>;
@@ -30,59 +49,6 @@
 			label = "wps";
 			gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
 			linux,code = <KEY_WPS_BUTTON>;
-		};
-	};
-
-	gpio-leds {
-		compatible = "gpio-leds";
-
-		cpu {
-			label = "a604m:blue:cpu";
-			gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
-		};
-
-		wlan2g {
-			label = "a604m:blue:wlan2g";
-			gpios = <&gpio1 14 GPIO_ACTIVE_LOW>;
-		};
-
-		wlan5g {
-			label = "a604m:blue:wlan5g";
-			gpios = <&gpio0 5 GPIO_ACTIVE_LOW>;
-		};
-	};
-};
-
-&ehci {
-	status = "disabled";
-};
-
-&ethernet {
-	mtd-mac-address = <&factory 0x4>;
-};
-
-&ohci {
-	status = "disabled";
-};
-
-&pcie {
-	status = "okay";
-
-	pcie-bridge {
-		mt76@1,0 {
-			reg = <0x0000 0 0 0 0>;
-			device_type = "pci";
-			mediatek,mtd-eeprom = <&factory 0x8000>;
-			ieee80211-freq-limit = <5000000 6000000>;
-		};
-	};
-};
-
-&pinctrl {
-	state_default: pinctrl0 {
-		gpio {
-			ralink,group = "i2c", "uart1", "wdt";
-			ralink,function = "gpio";
 		};
 	};
 };
@@ -119,6 +85,40 @@
 		partition@40000 {
 			label = "firmware";
 			reg = <0x40000 0x7c0000>;
+		};
+	};
+};
+
+&pinctrl {
+	state_default: pinctrl0 {
+		gpio {
+			ralink,group = "i2c", "uart1", "wdt";
+			ralink,function = "gpio";
+		};
+	};
+};
+
+&ehci {
+	status = "disabled";
+};
+
+&ohci {
+	status = "disabled";
+};
+
+&ethernet {
+	mtd-mac-address = <&factory 0x4>;
+};
+
+&pcie {
+	status = "okay";
+
+	pcie-bridge {
+		mt76@1,0 {
+			reg = <0x0000 0 0 0 0>;
+			device_type = "pci";
+			mediatek,mtd-eeprom = <&factory 0x8000>;
+			ieee80211-freq-limit = <5000000 6000000>;
 		};
 	};
 };
