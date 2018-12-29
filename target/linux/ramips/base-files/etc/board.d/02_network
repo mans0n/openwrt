@@ -40,6 +40,7 @@ ramips_setup_interfaces()
 	3g150b|\
 	3g300m|\
 	a5-v11|\
+	air-cube|\
 	all0256n-4M|\
 	all0256n-8M|\
 	all5002|\

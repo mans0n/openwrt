@@ -160,6 +160,7 @@ get_status_led() {
 	zorlik,zl5900v2)
 		status_led="$boardname:blue:power"
 		;;
+	air-cube|\
 	dlink,dap-1522-a1|\
 	phicomm,k2g|\
 	k2p|\

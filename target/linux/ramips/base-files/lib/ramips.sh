@@ -34,6 +34,9 @@ ramips_board_detect() {
 	*"Air3GII")
 		name="air3gii"
 		;;
+	*"AIR Cube")
+		name="air-cube"
+		;;
 	*"ALL0239-3G")
 		name="all0239-3g"
 		;;
