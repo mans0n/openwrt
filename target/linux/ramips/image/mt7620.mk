@@ -284,6 +284,16 @@ define Device/hc5861
 endef
 TARGET_DEVICES += hc5861
 
+define Device/iptime_a1004ns
+  DTS := A1004NS
+  BLOCKSIZE := 64k
+  IMAGE_SIZE := 16192k
+  UIMAGE_NAME := a1004ns
+  DEVICE_TITLE := EFM ipTIME A1004ns
+  DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport
+endef
+TARGET_DEVICES += iptime_a1004ns
+
 define Device/iptime_a104ns
   DTS := A104NS
   BLOCKSIZE := 64k
