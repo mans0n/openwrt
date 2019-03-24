@@ -289,7 +289,7 @@ define Device/iptime_a1004ns
   BLOCKSIZE := 64k
   IMAGE_SIZE := 16192k
   UIMAGE_NAME := a1004ns
-  DEVICE_TITLE := EFM ipTIME A1004ns
+  DEVICE_TITLE := ipTIME A1004ns
   DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport
 endef
 TARGET_DEVICES += iptime_a1004ns
@@ -299,7 +299,7 @@ define Device/iptime_a104ns
   BLOCKSIZE := 64k
   IMAGE_SIZE := 8000k
   UIMAGE_NAME := a104ns
-  DEVICE_TITLE := EFM ipTIME A104ns
+  DEVICE_TITLE := ipTIME A104ns
   DEVICE_PACKAGES := kmod-usb2 kmod-usb-ohci kmod-usb-ledtrig-usbport
 endef
 TARGET_DEVICES += iptime_a104ns

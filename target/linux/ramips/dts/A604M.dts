@@ -7,7 +7,7 @@
 
 / {
 	compatible = "iptime,a604m", "mediatek,mt7628an-soc";
-	model = "EFM ipTIME A604M";
+	model = "ipTIME A604M";
 
 	memory@0 {
 		device_type = "memory";

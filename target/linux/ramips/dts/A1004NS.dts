@@ -7,7 +7,7 @@
 
 / {
 	compatible = "iptime,a1004ns", "ralink,mt7620a-soc";
-	model = "EFM ipTIME A1004ns";
+	model = "ipTIME A1004ns";
 
 	gpio-leds {
 		compatible = "gpio-leds";

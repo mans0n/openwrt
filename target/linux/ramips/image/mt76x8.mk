@@ -62,7 +62,7 @@ define Device/iptime_a3
   BLOCKSIZE := 64k
   IMAGE_SIZE := 7936k
   UIMAGE_NAME := a3
-  DEVICE_TITLE := EFM ipTIME A3
+  DEVICE_TITLE := ipTIME A3
 endef
 TARGET_DEVICES += iptime_a3
 
@@ -71,7 +71,7 @@ define Device/iptime_a604m
   BLOCKSIZE := 64k
   IMAGE_SIZE := 7936k
   UIMAGE_NAME := a604m
-  DEVICE_TITLE := EFM ipTIME A604M
+  DEVICE_TITLE := ipTIME A604M
 endef
 TARGET_DEVICES += iptime_a604m
 
