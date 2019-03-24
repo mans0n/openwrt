@@ -87,7 +87,6 @@ TARGET_DEVICES += air3gii
 
 define Device/air-cube
   DTS := AIRCUBE
-  BLOCKSIZE := 64k
   IMAGE_SIZE := $(ralink_default_fw_size_4M)
   UIMAGE_NAME := AIR CUBE(0.0.0)
   DEVICE_TITLE := WeVO AIR Cube
