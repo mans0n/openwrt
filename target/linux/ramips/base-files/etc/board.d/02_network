@@ -486,6 +486,10 @@ ramips_setup_macs()
 	iodata,wn-gx300gr)
 		wan_mac=$(macaddr_add "$(mtd_get_mac_binary Factory 4)" 1)
 		;;
+	iptime,a104ns)
+		lan_mac=$(cat /sys/class/net/eth0/address)
+		wan_mac=$(macaddr_add "$lan_mac" 2)
+		;;
 	kn_rc|\
 	kn_rf|\
 	kng_rc)

@@ -106,7 +106,6 @@
 
 &ethernet {
 	mtd-mac-address = <&factory 0xc20>;
-	mtd-mac-address-increment = <1>;
 };
 
 &ehci {
