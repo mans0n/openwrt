@@ -256,6 +256,10 @@ iptime,a604m)
 	ucidef_set_led_netdev "wlan2g" "wlan2g" "$boardname:blue:wlan2g" "wlan0"
 	ucidef_set_led_netdev "wlan5g" "wlan5g" "$boardname:blue:wlan5g" "wlan1"
 	;;
+iptime,extn3)
+	ucidef_set_led_default "status" "status" "$boardname:red:status" "0"
+	ucidef_set_led_wlan "wlan" "wlan" "$boardname:blue:status" "phy0tpt"
+	;;
 kn|\
 nbg-419n2)
 	set_usb_led "$boardname:green:usb"

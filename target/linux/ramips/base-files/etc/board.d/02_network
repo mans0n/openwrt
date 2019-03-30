@@ -50,6 +50,7 @@ ramips_setup_interfaces()
 	dcs-930|\
 	dcs-930l-b1|\
 	ht-tm02|\
+	iptime,extn3|\
 	linkits7688 | \
 	m2m|\
 	microwrt|\

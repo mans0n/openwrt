@@ -1,0 +1,114 @@
+/dts-v1/;
+
+#include "mt7628an.dtsi"
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+/ {
+	compatible = "iptime,extn3", "mediatek,mt7628an-soc";
+	model = "ipTIME Extender N3";
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x0 0x4000000>;
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		status_red {
+			label = "extn3:red:status";
+			gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+		};
+
+		status_blue {
+			label = "extn3:blue:status";
+			gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	gpio-keys-polled {
+		compatible = "gpio-keys-polled";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		poll-interval = <20>;
+
+		wps {
+			label = "wps";
+			gpios = <&gpio1 6 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_WPS_BUTTON>;
+		};
+
+		reset {
+			label = "reset";
+			gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+		};
+	};
+};
+
+&spi0 {
+	status = "okay";
+
+	m25p80@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <10000000>;
+		m25p,chunked-io = <32>;
+
+		partition@0 {
+			label = "u-boot";
+			reg = <0x0 0x20000>;
+			read-only;
+		};
+
+		partition@20000 {
+			label = "u-boot-env";
+			reg = <0x20000 0x10000>;
+			read-only;
+		};
+
+		factory: partition@30000 {
+			label = "factory";
+			reg = <0x30000 0x10000>;
+			read-only;
+		};
+
+		partition@40000 {
+			label = "firmware";
+			reg = <0x40000 0x3c0000>;
+		};
+	};
+};
+
+&pinctrl {
+	state_default: pinctrl0 {
+		gpio {
+			ralink,group = "wdt", "uart1";
+			ralink,function = "gpio";
+		};
+	};
+};
+
+&ehci {
+	status = "disabled";
+};
+
+&ohci {
+	status = "disabled";
+};
+
+&ethernet {
+	mtd-mac-address = <&factory 0x4>;
+};
+
+&esw {
+	mediatek,portdisable = <0x3e>;
+};
+
+&wmac {
+	status = "okay";
+};

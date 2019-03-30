@@ -73,6 +73,14 @@ define Device/iptime_a604m
 endef
 TARGET_DEVICES += iptime_a604m
 
+define Device/iptime_extn3
+  DTS := EXTN3
+  IMAGE_SIZE := 3840k
+  UIMAGE_NAME := extn3
+  DEVICE_TITLE := ipTIME Extender N3
+endef
+TARGET_DEVICES += iptime_extn3
+
 define Device/LinkIt7688
   DTS := LINKIT7688
   IMAGE_SIZE := $(ralink_default_fw_size_32M)
