@@ -37,9 +37,8 @@ endef
 
 define Device/dw02-412h
   DEVICE_TITLE := kt DW02-412H
-  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-usb-storage kmod-ath10k ath10k-firmware-qca988x
+  DEVICE_PACKAGES := kmod-usb-core kmod-usb2 kmod-ath10k ath10k-firmware-qca988x
   BOARDNAME = DW02-412H
-  CONSOLE = ttyS0,115200
   BLOCKSIZE := 128k
   PAGESIZE := 2048
   KERNEL_SIZE = 2048k
