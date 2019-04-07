@@ -202,6 +202,15 @@ platform_check_image() {
 	[ "$#" -gt 1 ] && return 1
 
 	case "$board" in
+	a804nm)
+		local magic=$(cybertan_get_image_magic "$1")
+		[ "$magic" != "613830346e6d0000" ] && {
+			echo "Invalid image, bad type: $magic"
+			return 1
+		}
+
+		return 0
+		;;
 	airgateway|\
 	airgatewaypro|\
 	airrouter|\

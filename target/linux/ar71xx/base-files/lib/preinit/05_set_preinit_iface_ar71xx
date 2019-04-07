@@ -8,6 +8,7 @@ set_preinit_iface() {
 	. /lib/functions.sh
 
 	case $(board_name) in
+	a804nm|\
 	alfa-ap96|\
 	alfa-nx|\
 	ap135-020|\

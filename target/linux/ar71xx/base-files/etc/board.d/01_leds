@@ -18,6 +18,9 @@ a60)
 	ucidef_set_led_default "status-red" "Status (red)" "a60:red:status" "0"
 	ucidef_set_led_default "status-blue" "Status (blue)" "a60:blue:status" "0"
 	;;
+a804nm)
+	ucidef_set_led_wlan "wlan" "WLAN" "$board:blue:wlan" "phy1tpt"
+	;;
 airgateway|\
 airgatewaypro)
 	ucidef_set_led_wlan "wlan" "WLAN" "ubnt:blue:wlan" "phy0tpt"

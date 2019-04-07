@@ -14,6 +14,9 @@ get_status_led() {
 	a60)
 		status_led="a60:green:status"
 		;;
+	a804nm)
+		status_led="$board:blue:cpu"
+		;;
 	alfa-nx)
 		status_led="alfa:green:led_8"
 		;;

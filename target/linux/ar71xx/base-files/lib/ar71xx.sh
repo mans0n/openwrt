@@ -400,6 +400,9 @@ ar71xx_board_detect() {
 	*"A60")
 		name="a60"
 		;;
+	*"A804NS-MU")
+		name="a804nm"
+		;;
 	*"AC1750DB")
 		name="f9k1115v2"
 		;;

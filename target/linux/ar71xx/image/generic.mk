@@ -42,6 +42,24 @@ define Build/mkdapimg2
 	mv $@.new $@
 endef
 
+define Build/a804nm-factory
+	dd if=/dev/zero of=$@.new bs=262144 count=1
+	echo -ne "EFMQC\x00\x00\x00a804nm\x00\x00" | dd of=$@.new seek=195584 oflag=seek_bytes conv=notrunc
+	echo -ne "\x1f\x28\x7f\xa8" | dd of=$@.new seek=195668 oflag=seek_bytes conv=notrunc
+	cat $@ >> $@.new
+	mv $@.new $@
+endef
+
+define Build/a804nm-header
+	( \
+		echo -ne "a804nm\x00\x0000_000\x00\x00\x8b\x99\x8f\x9a\xc9\xfb\xfa\xf2"; \
+		dd if=/dev/zero bs=24 count=1; \
+		echo -ne "\x00\x00\x00\x00\xb9\xf0\xfa\xf2"; \
+	) > $@.new
+	cat $@ >> $@.new
+	mv $@.new $@
+endef
+
 define Build/netgear-squashfs
 	rm -rf $@.fs $@.squashfs
 	mkdir -p $@.fs/image
@@ -550,6 +568,22 @@ define Device/gl-usb150
 	append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
 endef
 TARGET_DEVICES += gl-usb150
+
+define Device/iptime_a804nm
+  DEVICE_TITLE := ipTIME A804NS-MU
+  DEVICE_PACKAGES := kmod-ath10k ath10k-firmware-qca9888 kmod-usb-core kmod-usb2
+  BOARDNAME := A804NM
+  KERNEL_SIZE := 2048k
+  IMAGE_SIZE := 16064k
+  MTDPARTS := spi0.0:192k(u-boot)ro,64k(config)ro,2048k(kernel),14016k(rootfs),64k(art)ro,16064k@0x40000(firmware)
+  SUPPORTED_DEVICES := a804nm
+  KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma | a804nm-header
+  IMAGES := sysupgrade.bin factory.bin
+  IMAGE/sysupgrade.bin := append-kernel | pad-to $$$$(KERNEL_SIZE) | \
+	append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
+  IMAGE/factory.bin := $$(IMAGE/sysupgrade.bin) | a804nm-factory
+endef
+TARGET_DEVICES += iptime_a804nm
 
 define Device/lan-turtle
   $(Device/tplink-16mlzma)

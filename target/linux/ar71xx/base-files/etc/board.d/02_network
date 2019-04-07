@@ -253,11 +253,27 @@ ar71xx_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0@eth1" "1:lan:1" "2:lan:4" "3:lan:3" "4:lan:2"
 		;;
+	a804nm|\
 	archer-c60-v1|\
-	archer-c60-v2)
+	archer-c60-v2|\
+	dir-615-i1|\
+	gl-ar300|\
+	omy-g1|\
+	r6100|\
+	smart-300|\
+	tl-wdr6500-v2|\
+	tl-wr940n-v4|\
+	tl-wr940n-v6|\
+	tl-wr941nd-v6|\
+	wnr1000-v2|\
+	wnr2000-v3|\
+	wnr2000-v4|\
+	wnr2200|\
+	wnr612-v2|\
+	wpn824n)
 		ucidef_set_interfaces_lan_wan "eth1.1" "eth0"
 		ucidef_add_switch "switch0" \
-			"0@eth1" "1:lan:1" "2:lan:2" "3:lan:3" "4:lan:4"
+			"0@eth1" "1:lan" "2:lan" "3:lan" "4:lan"
 		;;
 	arduino-yun|\
 	dir-505-a1|\
@@ -342,23 +358,6 @@ ar71xx_setup_interfaces()
 
 		ucidef_add_switch "switch1" \
 			"0@eth1" "1:lan" "2:lan" "3:lan" "4:lan" "5:lan"
-		;;
-	dir-615-i1|\
-	omy-g1|\
-	r6100|\
-	smart-300|\
-	tl-wdr6500-v2|\
-	tl-wr940n-v4|\
-	tl-wr940n-v6|\
-	tl-wr941nd-v6|\
-	wnr1000-v2|\
-	wnr2000-v4|\
-	wnr2200|\
-	wnr612-v2|\
-	wpn824n)
-		ucidef_set_interfaces_lan_wan "eth1.1" "eth0"
-		ucidef_add_switch "switch0" \
-			"0@eth1" "1:lan:1" "2:lan:2" "3:lan:3" "4:lan:4"
 		;;
 	tl-mr6400)
 		ucidef_set_interfaces_lan_wan "eth0.1 eth1" "usb0"
