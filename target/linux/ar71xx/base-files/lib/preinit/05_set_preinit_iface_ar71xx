@@ -21,6 +21,7 @@ set_preinit_iface() {
 	gl-ar750|\
 	gl-inet|\
 	jwap003|\
+	napl-5000|\
 	pb42|\
 	pb44|\
 	rb-433|\

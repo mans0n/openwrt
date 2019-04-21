@@ -1,0 +1,11 @@
+#!/bin/sh
+
+. /lib/functions.sh
+
+board=$(board_name)
+
+case "$board" in
+napl-5000)
+	fw_setenv bootcmd bootm 0x9f050100
+	;;
+esac

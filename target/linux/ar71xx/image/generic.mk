@@ -60,6 +60,27 @@ define Build/a804nm-header
 	mv $@.new $@
 endef
 
+define Build/napl-5000-header
+	dd if=/dev/zero of=$@.new bs=256 count=1
+	echo -ne "\x13\x97\x21\x74" | dd of=$@.new conv=notrunc
+	echo -ne "\x01" | dd of=$@.new bs=1 seek=6 conv=notrunc
+	echo -ne "\x0c" | dd of=$@.new bs=1 seek=9 conv=notrunc
+	echo -ne "\x0c" | dd of=$@.new bs=1 seek=29 conv=notrunc
+	echo -ne "\x01" | dd of=$@.new bs=1 seek=47 conv=notrunc
+	echo -n "napl-5000_v0.0.00.bin" | dd of=$@.new bs=1 seek=48 conv=notrunc
+	echo -n "NAPL-5000" | dd of=$@.new bs=1 seek=112 conv=notrunc
+	cat $@ >> $@.new
+	mv $@.new $@
+endef
+
+define Build/napl-5000-factory
+	dd if=$@ of=$@.new bs=7864320 conv=sync
+	dd if=$@.new of=$@.tmp bs=5308160 count=1 skip=256 iflag=skip_bytes
+	crc32 $@.tmp | xxd -r -p | dd of=$@.new bs=1 seek=32 conv=notrunc
+	rm $@.tmp
+	mv $@.new $@
+endef
+
 define Build/netgear-squashfs
 	rm -rf $@.fs $@.squashfs
 	mkdir -p $@.fs/image
@@ -1111,6 +1132,20 @@ define Device/n5q
 	append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
 endef
 TARGET_DEVICES += n5q
+
+define Device/napl-5000
+  DEVICE_TITLE := LG U+ NAPL-5000
+  BOARDNAME := NAPL-5000
+  KERNEL_SIZE := 2048k
+  IMAGE_SIZE := 7808k
+  MTDPARTS := spi0.0:256k(u-boot)ro,64k(u-boot-env),2048k(kernel),5760k(rootfs),64k(art)ro,7808k@0x50000(firmware)
+  SUPPORTED_DEVICES := napl-5000
+  KERNEL := kernel-bin | patch-cmdline | lzma | uImage lzma | napl-5000-header
+  KERNEL_INITRAMFS := $$(KERNEL) | napl-5000-factory
+  IMAGE/sysupgrade.bin := append-kernel | pad-to $$$$(KERNEL_SIZE) | \
+	append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
+endef
+TARGET_DEVICES += napl-5000
 
 define Device/NBG6616
   DEVICE_TITLE := ZyXEL NBG6616

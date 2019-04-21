@@ -164,6 +164,7 @@ obj-$(CONFIG_ATH79_MACH_MYNET_REXT)		+= mach-mynet-rext.o
 obj-$(CONFIG_ATH79_MACH_MZK_W04NU)		+= mach-mzk-w04nu.o
 obj-$(CONFIG_ATH79_MACH_MZK_W300NH)		+= mach-mzk-w300nh.o
 obj-$(CONFIG_ATH79_MACH_N5Q)			+= mach-n5q.o
+obj-$(CONFIG_ATH79_MACH_NAPL_5000)		+= mach-napl-5000.o
 obj-$(CONFIG_ATH79_MACH_NBG460N)		+= mach-nbg460n.o
 obj-$(CONFIG_ATH79_MACH_NBG6716)		+= mach-nbg6716.o
 obj-$(CONFIG_ATH79_MACH_RAMBUTAN)		+= mach-rambutan.o

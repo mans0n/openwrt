@@ -311,6 +311,9 @@ get_status_led() {
 	mzk-w300nh)
 		status_led="planex:green:status"
 		;;
+	napl-5000)
+		status_led="$board:red:power"
+		;;
 	nbg460n_550n_550nh)
 		status_led="nbg460n:green:power"
 		;;

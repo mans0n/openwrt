@@ -871,6 +871,9 @@ ar71xx_board_detect() {
 	*"Nanostation M XW")
 		name="nanostation-m-xw"
 		;;
+	*"NAPL-5000")
+		name="napl-5000"
+		;;
 	*"NBG460N/550N/550NH")
 		name="nbg460n_550n_550nh"
 		;;

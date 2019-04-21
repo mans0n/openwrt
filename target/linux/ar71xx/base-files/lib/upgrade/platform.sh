@@ -651,6 +651,14 @@ platform_check_image() {
 		cybertan_check_image "$1" && return 0
 		return 1
 		;;
+	napl-5000)
+		[ "$magic_long" != "13972174" ] && {
+			echo "Invalid image type."
+			return 1
+		}
+
+		return 0
+		;;
 	nbg6616|\
 	uap-pro|\
 	unifi-outdoor-plus)
