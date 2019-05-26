@@ -1,8 +1,8 @@
 /*
- *  LG U+ NAPL-5000 support
+ *  LG U+ NAPL-5000 board support
  *
- *  Based on the ALFA Network N2/N5 board support code
- *  Copyright (c) 2019 mans0n <mans0n@gorani.run>
+ *  Copyright (C) 2019 Sungbo Eo <mans0n@gorani.run>
+ *  Based on mach-alfa-nx.c
  *  Copyright (C) 2011-2012 Gabor Juhos <juhosg@openwrt.org>
  *
  *  This program is free software; you can redistribute it and/or modify it

@@ -1,15 +1,13 @@
-
 /*
- * ipTIME A804NS-MU support
+ *  ipTIME A804NS-MU board support
  *
- * Based on the TP-Link Archer C60 v1 board support code
- * Copyright (c) 2019 mans0n <mans0n@gorani.run>
- * Copyright (C) 2017 Henryk Heisig <hyniu@o2.pl>
+ *  Copyright (C) 2019 Sungbo Eo <mans0n@gorani.run>
+ *  Based on mach-archer-c60-v1.c
+ *  Copyright (C) 2017 Henryk Heisig <hyniu@o2.pl>
  *
  *  This program is free software; you can redistribute it and/or modify it
  *  under the terms of the GNU General Public License version 2 as published
  *  by the Free Software Foundation.
- *
  */
 
 #include <linux/platform_device.h>
