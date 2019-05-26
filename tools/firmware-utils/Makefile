@@ -84,6 +84,7 @@ define Host/Compile
 	$(call cc,mkdhpimg buffalo-lib, -Wall)
 	$(call cc,mkdlinkfw mkdlinkfw-lib, -lz -Wall --std=gnu99)
 	$(call cc,dns313-header, -Wall)
+	cp src/mkiptimefw $(HOST_BUILD_DIR)/bin
 endef
 
 define Host/Install
