@@ -14,6 +14,10 @@ case "$board" in
 	ucidef_set_led_default "health" "health" "pogo_e02:green:health" "1"
 	ucidef_set_led_default "fault" "fault" "pogo_e02:orange:fault" "1"
 	;;
+"iptime,nas1")
+	ucidef_set_led_ataport "sata" "HDD" "nas1:blue:hdd" "1"
+	ucidef_set_led_usbhost "usb" "USB" "nas1:blue:usb"
+	;;
 "linksys,audi")
 	ucidef_set_led_default "power" "power" "audi:green:power" "1"
 	;;

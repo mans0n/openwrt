@@ -15,6 +15,9 @@ get_status_led() {
 	cloudengines,pogoplugv4)
 		status_led="pogoplugv4:green:health"
 		;;
+	iptime,nas1)
+		status_led="nas1:blue:ready"
+		;;
 	linksys,audi)
 		status_led="audi:green:power"
 		;;

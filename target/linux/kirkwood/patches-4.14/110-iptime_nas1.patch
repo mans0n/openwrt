@@ -1,0 +1,228 @@
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -243,6 +243,7 @@ dtb-$(CONFIG_MACH_KIRKWOOD) += \
+ 	kirkwood-ib62x0.dtb \
+ 	kirkwood-iconnect.dtb \
+ 	kirkwood-iomega_ix2_200.dtb \
++	kirkwood-iptime_nas1.dtb \
+ 	kirkwood-is2.dtb \
+ 	kirkwood-km_kirkwood.dtb \
+ 	kirkwood-laplug.dtb \
+--- /dev/null
++++ b/arch/arm/boot/dts/kirkwood-iptime_nas1.dts
+@@ -0,0 +1,215 @@
++/dts-v1/;
++
++#include "kirkwood.dtsi"
++#include "kirkwood-6281.dtsi"
++
++/ {
++	model = "ipTIME NAS1";
++	compatible = "iptime,nas1", "marvell,kirkwood-88f6281", "marvell,kirkwood";
++
++	memory {
++		device_type = "memory";
++		reg = <0x00000000 0x10000000>;
++	};
++
++	chosen {
++		bootargs = "console=ttyS0,115200n8 rootfstype=squashfs,jffs2";
++		stdout-path = &uart0;
++	};
++
++	gpio-leds {
++		compatible = "gpio-leds";
++		pinctrl-0 = <&pmx_led_hdd &pmx_led_usb &pmx_led_ready>;
++		pinctrl-names = "default";
++
++		hdd {
++			label = "nas1:blue:hdd";
++			gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
++		};
++
++		usb {
++			label = "nas1:blue:usb";
++			gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
++		};
++
++		ready {
++			label = "nas1:blue:ready";
++			gpios = <&gpio1 14 GPIO_ACTIVE_LOW>;
++		};
++	};
++
++	gpio-keys {
++		compatible = "gpio-keys";
++		pinctrl-0 = <&pmx_button_copy &pmx_button_power>;
++		pinctrl-names = "default";
++
++		copy {
++			label = "USB Copy Button";
++			linux,code = <KEY_COPY>;
++			gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
++			debounce-interval = <60>;
++		};
++
++		power {
++			label = "Power Button";
++			linux,code = <KEY_POWER>;
++			gpios = <&gpio1 16 GPIO_ACTIVE_HIGH>;
++			debounce-interval = <60>;
++		};
++	};
++
++	gpio-fan {
++		compatible = "gpio-fan";
++		pinctrl-0 = <&pmx_fan_low_speed &pmx_fan_high_speed>;
++		pinctrl-names = "default";
++		gpios = <&gpio1 9 GPIO_ACTIVE_HIGH
++		         &gpio1 10 GPIO_ACTIVE_HIGH>;
++		gpio-fan,speed-map = <0    0
++		                      3800 1
++		                      5000 2>;
++	};
++
++	gpio-poweroff {
++		compatible = "gpio-poweroff";
++		gpios = <&pca9536 0 GPIO_ACTIVE_LOW>;
++	};
++
++	regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		pinctrl-0 = <&pmx_usb_power_enable>;
++		pinctrl-names = "default";
++
++		usb_power: regulator@1 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++			regulator-name = "USB Power";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			enable-active-high;
++			regulator-always-on;
++			gpio = <&gpio1 11 GPIO_ACTIVE_HIGH>;
++		};
++	};
++};
++
++&pinctrl {
++	pmx_led_hdd: pmx-led-hdd {
++		marvell,pins = "mpp35";
++		marvell,function = "gpio";
++	};
++
++	pmx_fan_low_speed: pmx-fan-low-speed {
++		marvell,pins = "mpp41";
++		marvell,function = "gpio";
++	};
++
++	pmx_fan_high_speed: pmx-fan-high-speed {
++		marvell,pins = "mpp42";
++		marvell,function = "gpio";
++	};
++
++	pmx_usb_power_enable: pmx-usb-power-enable {
++		marvell,pins = "mpp43";
++		marvell,function = "gpio";
++	};
++
++	pmx_button_copy: pmx-button-copy {
++		marvell,pins = "mpp44";
++		marvell,function = "gpio";
++	};
++
++	pmx_led_usb: pmx-led-usb {
++		marvell,pins = "mpp45";
++		marvell,function = "gpio";
++	};
++
++	pmx_led_ready: pmx-led-ready {
++		marvell,pins = "mpp46";
++		marvell,function = "gpio";
++	};
++
++	pmx_button_power: pmx-button-power {
++		marvell,pins = "mpp48";
++		marvell,function = "gpio";
++	};
++};
++
++&spi0 {
++	status = "okay";
++
++	flash@0 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "st,m25p128", "jedec,spi-nor";
++		reg = <0>;
++		spi-max-frequency = <20000000>;
++
++		uboot: u-boot@0 {
++			label = "u-boot";
++			reg = <0x0 0x40000>;
++			read-only;
++		};
++
++		header@40000 {
++			label = "header";
++			reg = <0x40000 0x400>;
++		};
++
++		firmware@40400 {
++			label = "firmware";
++			reg = <0x40400 0xfbfc00>;
++		};
++
++		iptime-fw@40000 {
++			label = "iptime-fw";
++			reg = <0x40000 0xfc0000>;
++		};
++	};
++};
++
++&rtc {
++	status = "disabled";
++};
++
++&i2c0 {
++	status = "okay";
++
++	pca9536: gpio@41 {
++		compatible = "nxp,pca9536";
++		#gpio-cells = <2>;
++		gpio-controller;
++		reg = <0x41>;
++		ngpios = <4>;
++	};
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&mdio {
++	status = "okay";
++
++	ethphy1: ethernet-phy@1 {
++		compatible = "ethernet-phy-id0141.0e40",
++		             "ethernet-phy-ieee802.3-c22";
++		reg = <1>;
++	};
++};
++
++&eth1 {
++	status = "okay";
++
++	ethernet1-port@0 {
++		mtd-mac-address = <&uboot 0x3ffa8>;
++		phy-handle = <&ethphy1>;
++		phy-connection-type = "rgmii-id";
++	};
++};
++
++&sata {
++	status = "okay";
++	nr-ports = <1>;
++};

@@ -27,6 +27,11 @@ define Device/Default
   SUPPORTED_DEVICES := $(subst _,$(comma),$(1))
 endef
 
+define Build/mkiptimefw
+  $(STAGING_DIR_HOST)/bin/mkiptimefw $(1) $@ $@.new
+  mv $@.new $@
+endef
+
 define Device/cisco_on100
   DEVICE_TITLE := Cisco Systems ON100
   DEVICE_DTS := kirkwood-on100
@@ -61,6 +66,20 @@ define Device/iom_iconnect-1.1
   SUPPORTED_DEVICES += iconnect
 endef
 TARGET_DEVICES += iom_iconnect-1.1
+
+define Device/iptime_nas1
+  DEVICE_TITLE := ipTIME NAS1
+  DEVICE_DTS := kirkwood-iptime_nas1
+  DEVICE_PACKAGES := kmod-usb-ohci kmod-usb2 \
+  kmod-gpio-button-hotplug kmod-gpio-pca953x kmod-hwmon-gpiofan
+  KERNEL := kernel-bin | append-dtb | uImage none | mkiptimefw nas1
+  BLOCKSIZE := 256k
+  IMAGES := sysupgrade.bin
+  IMAGE_SIZE := 16128k
+  IMAGE/sysupgrade.bin := append-kernel | append-rootfs | pad-rootfs | \
+  append-metadata | check-size $$$$(IMAGE_SIZE)
+endef
+TARGET_DEVICES += iptime_nas1
 
 define Device/linksys_audi
   DEVICE_TITLE := Linksys EA3500 (Audi)
