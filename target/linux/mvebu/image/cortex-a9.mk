@@ -155,6 +155,14 @@ define Device/globalscale-mirabox
 endef
 TARGET_DEVICES += globalscale-mirabox
 
+define Device/iptime_nas1dual
+  DEVICE_TITLE := ipTIME NAS1dual
+  DEVICE_DTS := armada-385-nas1dual
+  DEVICE_PACKAGES := kmod-usb-uhci kmod-usb3 \
+    kmod-gpio-button-hotplug kmod-hwmon-gpiofan
+endef
+TARGET_DEVICES += iptime_nas1dual
+
 define Device/turris-omnia
   KERNEL_INSTALL := 1
   KERNEL := kernel-bin

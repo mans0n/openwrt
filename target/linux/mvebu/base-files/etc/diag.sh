@@ -22,6 +22,9 @@ get_status_led() {
 	armada-385-linksys-venom)
 		status_led="venom:blue:power"
 		;;
+	armada-385-nas1dual)
+		status_led="nas1dual:blue:ready"
+		;;
 	armada-xp-linksys-mamba)
 		status_led="mamba:white:power"
 		;;

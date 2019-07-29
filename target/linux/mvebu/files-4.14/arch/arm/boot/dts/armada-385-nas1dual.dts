@@ -1,0 +1,277 @@
+/*
+ * Device Tree file for ipTIME NAS1dual
+ *
+ * Copyright (C) 2019 Sungbo Eo <mans0n@gorani.run>
+ *
+ * This file is dual-licensed: you can use it either under the terms
+ * of the GPL or the X11 license, at your option. Note that this dual
+ * licensing only applies to this file, and not this project as a
+ * whole.
+ *
+ *  a) This file is licensed under the terms of the GNU General Public
+ *     License version 2.  This program is licensed "as is" without
+ *     any warranty of any kind, whether express or implied.
+ *
+ * Or, alternatively,
+ *
+ *  b) Permission is hereby granted, free of charge, to any person
+ *     obtaining a copy of this software and associated documentation
+ *     files (the "Software"), to deal in the Software without
+ *     restriction, including without limitation the rights to use,
+ *     copy, modify, merge, publish, distribute, sublicense, and/or
+ *     sell copies of the Software, and to permit persons to whom the
+ *     Software is furnished to do so, subject to the following
+ *     conditions:
+ *
+ *     The above copyright notice and this permission notice shall be
+ *     included in all copies or substantial portions of the Software.
+ *
+ *     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *     EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *     OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *     NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ *     HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *     WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *     FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ *     OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include "armada-385.dtsi"
+
+/ {
+	model = "ipTIME NAS1dual";
+	compatible = "iptime,nas1dual", "marvell,armada385", "marvell,armada380";
+
+	chosen {
+		bootargs = "console=ttyS0,115200n8 rootfstype=squashfs,jffs2";
+		// stdout-path = "serial0:115200n8";
+		stdout-path = &uart0;
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0x00000000 0x80000000>; /* 2GB */
+	};
+
+	soc {
+		ranges = <MBUS_ID(0xf0, 0x01) 0 0xf1000000 0x100000
+			  MBUS_ID(0x01, 0x1d) 0 0xfff00000 0x100000
+			  MBUS_ID(0x09, 0x19) 0 0xf1100000 0x10000
+			  MBUS_ID(0x09, 0x15) 0 0xf1110000 0x10000
+			  MBUS_ID(0x0c, 0x04) 0 0xf1200000 0x100000>;
+
+	gpio-fan {
+		compatible = "gpio-fan";
+		pinctrl-0 = <&gpio_fan_pins>;
+		pinctrl-names = "default";
+		gpios = <&gpio0 25 GPIO_ACTIVE_HIGH
+		         &gpio1 18 GPIO_ACTIVE_HIGH>;
+		gpio-fan,speed-map = <0    0
+		                      3800 1
+		                      5000 2>;
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+		pinctrl-0 = <&gpio_keys_pins>;
+		pinctrl-names = "default";
+
+		power {
+			label = "Power Button";
+			linux,code = <KEY_POWER>;
+			gpios = <&gpio0 24 GPIO_ACTIVE_LOW>;
+			debounce-interval = <60>;
+		};
+
+		reset {
+			label = "Reset Button";
+			linux,code = <KEY_RESTART>;
+			gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
+			debounce-interval = <60>;
+		};
+
+		copy {
+			label = "USB Copy Button";
+			linux,code = <KEY_COPY>;
+			gpios = <&gpio1 16 GPIO_ACTIVE_LOW>;
+			debounce-interval = <60>;
+		};
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+		pinctrl-0 = <&gpio_leds_pins>;
+		pinctrl-names = "default";
+
+		ready {
+			label = "nas1dual:blue:ready";
+			gpios = <&gpio0 18 GPIO_ACTIVE_LOW>;
+		};
+
+		sata {
+			label = "nas1dual:blue:sata";
+			gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "disk-activity";
+		};
+
+		usb {
+			label = "nas1dual:blue:usb";
+			gpios = <&gpio1 19 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	gpio-poweroff {
+		compatible = "gpio-poweroff";
+		gpios = <&pca9536 1 GPIO_ACTIVE_LOW>;
+	};
+
+	reg_sata_power: regulator {
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&sata_power_pins>;
+		regulator-name = "sata-power";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		regulator-always-on;
+		gpio = <&gpio1 20 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&ahci0 {
+	status = "okay";
+};
+
+&bm {
+	status = "okay";
+};
+
+&bm_bppi {
+	status = "okay";
+};
+
+&eth0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&ge0_rgmii_pins>;
+	status = "okay";
+	phy-mode = "rgmii-id";
+	mtd-mac-address = <&uboot 0xfffa8>;
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
+};
+
+&eth1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&ge1_rgmii_pins>;
+	status = "okay";
+	phy-mode = "rgmii-id";
+	mtd-mac-address = <&uboot 0xfffa8>;
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
+};
+
+&i2c0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c0_pins>;
+	status = "okay";
+
+	pca9536: gpio@41 {
+		compatible = "nxp,pca9536";
+		#gpio-cells = <2>;
+		gpio-controller;
+		reg = <0x41>;
+		ngpios = <4>;
+	};
+};
+
+// &mdio {
+// 	pinctrl-names = "default";
+// 	pinctrl-0 = <&mdio_pins>;
+// 	status = "okay";
+
+// 	phy1: phy@1 {
+// 		status = "okay";
+// 		compatible = "ethernet-phy-id0141.0dd0", "ethernet-phy-ieee802.3-c22";
+// 		reg = <1>;
+// 	};
+// };
+
+&pinctrl {
+	gpio_keys_pins: gpio-keys-pins {
+		/* mpp24: power, mpp26: reset, mpp48: copy */
+		marvell,pins = "mpp24", "mpp26", "mpp48";
+		marvell,function = "gpio";
+	};
+
+	gpio_leds_pins: gpio-leds-pins {
+		/* mpp18: ready, mpp20: sata, mpp51: usb */
+		marvell,pins = "mpp18", "mpp20", "mpp51";
+		marvell,function = "gpio";
+	};
+
+	gpio_fan_pins: gpio-fan-pins {
+		/* mpp25: low-speed, mpp50: high-speed */
+		marvell,pins = "mpp25", "mpp50";
+		marvell,function = "gpio";
+	};
+
+	sata_power_pins: sata-power-pins {
+		marvell,pins = "mpp52";
+		marvell,function = "gpio";
+	};
+};
+
+&spi1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi1_pins>;
+	status = "okay";
+
+	spi-nor@0 {
+		compatible = "jedec,spi-nor";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0>;
+		spi-max-frequency = <40000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			uboot: partition@0 {
+				reg = <0x0 0x00100000>;
+				label = "u-boot";
+			};
+
+			partition@100000 {
+				reg = <0x00100000 0x03f00000>;
+				label = "firmware";
+			};
+		};
+	};
+};
+
+&uart0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart0_pins>;
+	status = "okay";
+};
+
+// &uart1 {
+// 	pinctrl-names = "default";
+// 	pinctrl-0 = <&uart1_pins>;
+// 	status = "okay";
+// };
+
+&usb3_0 {
+	status = "okay";
+};

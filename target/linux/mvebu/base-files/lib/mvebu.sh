@@ -68,6 +68,9 @@ mvebu_board_detect() {
 	*"SolidRun Clearfog Base A1")
 		name="armada-388-clearfog-base"
 		;;
+	*"ipTIME NAS1dual")
+		name="armada-385-nas1dual"
+		;;
 	*"Turris Omnia")
 		name="armada-385-turris-omnia"
 		;;
