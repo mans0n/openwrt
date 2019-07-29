@@ -1,3 +1,4 @@
 #!/bin/sh
 
+# Usage: $0 <model> <input> <output>
 cp "$2" "$3"
