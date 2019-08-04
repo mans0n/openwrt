@@ -33,6 +33,7 @@ ramips_setup_interfaces()
 	case $board in
 	11acnas|\
 	w2914nsv2|\
+	wf-2881|\
 	zbt-we2026)
 		ucidef_add_switch "switch0" \
 			"0:lan:4" "1:lan:3" "2:lan:2" "3:lan:1" "4:wan:5" "6@eth0"
@@ -114,7 +115,6 @@ ramips_setup_interfaces()
 	sk-wb8|\
 	u7621-06-256M-16M|\
 	vr500|\
-	wf-2881|\
 	whr-g300n|\
 	mqmaker,witi-256m|\
 	mqmaker,witi-512m|\
