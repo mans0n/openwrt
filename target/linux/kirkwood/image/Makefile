@@ -71,7 +71,8 @@ define Device/iptime_nas1
   DEVICE_TITLE := ipTIME NAS1
   DEVICE_DTS := kirkwood-iptime_nas1
   DEVICE_PACKAGES := kmod-usb-ohci kmod-usb2 \
-  kmod-gpio-button-hotplug kmod-gpio-pca953x kmod-hwmon-gpiofan
+  kmod-gpio-button-hotplug kmod-gpio-pca953x \
+  kmod-hwmon-core kmod-hwmon-gpiofan
   KERNEL := kernel-bin | append-dtb | uImage none | mkiptimefw nas1
   BLOCKSIZE := 256k
   IMAGES := sysupgrade.bin
