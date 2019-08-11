@@ -27,11 +27,6 @@ define Device/Default
   SUPPORTED_DEVICES := $(subst _,$(comma),$(1))
 endef
 
-define Build/mkiptimefw
-  $(STAGING_DIR_HOST)/bin/mkiptimefw $(1) $@ $@.new
-  mv $@.new $@
-endef
-
 define Device/cisco_on100
   DEVICE_TITLE := Cisco Systems ON100
   DEVICE_DTS := kirkwood-on100

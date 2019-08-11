@@ -2,6 +2,9 @@
  * Device Tree file for ipTIME NAS1dual
  *
  * Copyright (C) 2019 Sungbo Eo <mans0n@gorani.run>
+ * Based on armada-385-linksys.dtsi
+ * Copyright (C) 2015 Imre Kaloz <kaloz@openwrt.org>
+ *
  *
  * This file is dual-licensed: you can use it either under the terms
  * of the GPL or the X11 license, at your option. Note that this dual
@@ -47,8 +50,7 @@
 	compatible = "iptime,nas1dual", "marvell,armada385", "marvell,armada380";
 
 	chosen {
-		bootargs = "console=ttyS0,115200n8 rootfstype=squashfs,jffs2";
-		// stdout-path = "serial0:115200n8";
+		bootargs = "console=ttyS0,115200n8 earlyprintk";
 		stdout-path = &uart0;
 	};
 
@@ -63,19 +65,9 @@
 			  MBUS_ID(0x09, 0x19) 0 0xf1100000 0x10000
 			  MBUS_ID(0x09, 0x15) 0 0xf1110000 0x10000
 			  MBUS_ID(0x0c, 0x04) 0 0xf1200000 0x100000>;
-
-	gpio-fan {
-		compatible = "gpio-fan";
-		pinctrl-0 = <&gpio_fan_pins>;
-		pinctrl-names = "default";
-		gpios = <&gpio0 25 GPIO_ACTIVE_HIGH
-		         &gpio1 18 GPIO_ACTIVE_HIGH>;
-		gpio-fan,speed-map = <0    0
-		                      3800 1
-		                      5000 2>;
 	};
 
-	gpio-keys {
+	keys {
 		compatible = "gpio-keys";
 		pinctrl-0 = <&gpio_keys_pins>;
 		pinctrl-names = "default";
@@ -102,7 +94,7 @@
 		};
 	};
 
-	gpio-leds {
+	leds {
 		compatible = "gpio-leds";
 		pinctrl-0 = <&gpio_leds_pins>;
 		pinctrl-names = "default";
@@ -124,6 +116,18 @@
 		};
 	};
 
+	gpio-fan {
+		compatible = "gpio-fan";
+		pinctrl-0 = <&gpio_fan_pins>;
+		pinctrl-names = "default";
+		gpios = <&gpio0 25 GPIO_ACTIVE_HIGH
+		         &gpio1 18 GPIO_ACTIVE_HIGH>;
+		gpio-fan,speed-map = <0    0
+		                      3800 1
+		                      5000 2>;
+		#cooling-cells = <2>;
+	};
+
 	gpio-poweroff {
 		compatible = "gpio-poweroff";
 		gpios = <&pca9536 1 GPIO_ACTIVE_LOW>;
@@ -143,6 +147,11 @@
 
 &ahci0 {
 	status = "okay";
+
+	sata0: sata-port@0 {
+		reg = <0>;
+		target-supply = <&reg_sata_power>;
+	};
 };
 
 &bm {
@@ -157,7 +166,11 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&ge0_rgmii_pins>;
 	status = "okay";
-	phy-mode = "rgmii-id";
+	phy-handle = <&phy0>;
+	phy-mode = "rgmii";
+	buffer-manager = <&bm>;
+	bm,pool-long = <0>;
+	bm,pool-short = <1>;
 	mtd-mac-address = <&uboot 0xfffa8>;
 
 	fixed-link {
@@ -170,7 +183,11 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&ge1_rgmii_pins>;
 	status = "okay";
-	phy-mode = "rgmii-id";
+	phy-handle = <&phy1>;
+	phy-mode = "rgmii";
+	buffer-manager = <&bm>;
+	bm,pool-long = <2>;
+	bm,pool-short = <3>;
 	mtd-mac-address = <&uboot 0xfffa8>;
 
 	fixed-link {
@@ -193,17 +210,20 @@
 	};
 };
 
-// &mdio {
-// 	pinctrl-names = "default";
-// 	pinctrl-0 = <&mdio_pins>;
-// 	status = "okay";
+&mdio {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mdio_pins>;
 
-// 	phy1: phy@1 {
-// 		status = "okay";
-// 		compatible = "ethernet-phy-id0141.0dd0", "ethernet-phy-ieee802.3-c22";
-// 		reg = <1>;
-// 	};
-// };
+	phy0: ethernet-phy@0 {
+		compatible = "ethernet-phy-id0141.0dd0", "ethernet-phy-ieee802.3-c22";
+		reg = <0>;
+	};
+
+	phy1: ethernet-phy@1 {
+		compatible = "ethernet-phy-id0141.0dd0", "ethernet-phy-ieee802.3-c22";
+		reg = <1>;
+	};
+};
 
 &pinctrl {
 	gpio_keys_pins: gpio-keys-pins {
@@ -228,6 +248,11 @@
 		marvell,pins = "mpp52";
 		marvell,function = "gpio";
 	};
+
+	uart1_pins: uart-pins-1 {
+		marvell,pins = "mpp45", "mpp46";
+		marvell,function = "ua1";
+	};
 };
 
 &spi1 {
@@ -235,7 +260,7 @@
 	pinctrl-0 = <&spi1_pins>;
 	status = "okay";
 
-	spi-nor@0 {
+	flash@0 {
 		compatible = "jedec,spi-nor";
 		#address-cells = <1>;
 		#size-cells = <1>;
@@ -248,13 +273,32 @@
 			#size-cells = <1>;
 
 			uboot: partition@0 {
-				reg = <0x0 0x00100000>;
+				reg = <0x00000000 0x00100000>;
 				label = "u-boot";
 			};
 
 			partition@100000 {
 				reg = <0x00100000 0x03f00000>;
 				label = "firmware";
+
+				compatible = "fixed-partitions";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				partition@0 {
+					reg = <0x00000000 0x00000400>;
+					label = "header";
+				};
+
+				partition@400 {
+					reg = <0x00000400 0x002ffc00>;
+					label = "kernel";
+				};
+
+				partition@300000 {
+					reg = <0x00300000 0x03c00000>;
+					label = "rootfs";
+				};
 			};
 		};
 	};
@@ -266,11 +310,11 @@
 	status = "okay";
 };
 
-// &uart1 {
-// 	pinctrl-names = "default";
-// 	pinctrl-0 = <&uart1_pins>;
-// 	status = "okay";
-// };
+&uart1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart1_pins>;
+	status = "okay";
+};
 
 &usb3_0 {
 	status = "okay";

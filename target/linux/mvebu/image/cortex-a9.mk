@@ -159,7 +159,15 @@ define Device/iptime_nas1dual
   DEVICE_TITLE := ipTIME NAS1dual
   DEVICE_DTS := armada-385-nas1dual
   DEVICE_PACKAGES := kmod-usb-uhci kmod-usb3 \
-    kmod-gpio-button-hotplug kmod-hwmon-gpiofan
+    kmod-gpio-button-hotplug kmod-hwmon-core kmod-hwmon-gpiofan
+  KERNEL := kernel-bin | append-dtb | mkiptimefw nas1dual
+  KERNEL_LOADADDR := 0x04000000
+  KERNEL_SIZE := 3072k
+  BLOCKSIZE := 64k
+  IMAGES := sysupgrade.bin
+  IMAGE_SIZE := 64512k
+  IMAGE/sysupgrade.bin := append-kernel | pad-to $$(KERNEL_SIZE) | append-rootfs | \
+    pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
 endef
 TARGET_DEVICES += iptime_nas1dual
 

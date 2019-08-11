@@ -19,6 +19,10 @@ platform_do_upgrade() {
 	armada-385-turris-omnia|armada-388-clearfog-base|armada-388-clearfog-pro|globalscale,espressobin|marvell,armada8040-mcbin)
 		platform_do_upgrade_sdcard "$ARGV"
 		;;
+	armada-385-nas1dual)
+		PART_NAME=firmware
+		default_do_upgrade "$ARGV"
+		;;
 	*)
 		default_do_upgrade "$ARGV"
 		;;

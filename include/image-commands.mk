@@ -230,6 +230,11 @@ define Build/combined-image
 	@mv $@.new $@
 endef
 
+define Build/mkiptimefw
+  $(STAGING_DIR_HOST)/bin/mkiptimefw $(1) $@ $@.new
+  mv $@.new $@
+endef
+
 define Build/openmesh-image
 	$(TOPDIR)/scripts/om-fwupgradecfg-gen.sh \
 		"$(call param_get_default,ce_type,$(1),$(DEVICE_NAME))" \

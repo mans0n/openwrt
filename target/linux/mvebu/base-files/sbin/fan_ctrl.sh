@@ -2,7 +2,9 @@
 
 CPU_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon2/temp1_input`
 DDR_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon1/temp1_input`
-WIFI_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon1/temp2_input`
+[ -f /sys/class/hwmon/hwmon1/temp2_input ] &&
+	WIFI_TEMP=`cut -c1-2 /sys/class/hwmon/hwmon1/temp2_input` ||
+	WIFI_TEMP=0
 
 CPU_LOW=85
 CPU_HIGH=95
@@ -15,6 +17,8 @@ if [ -d /sys/devices/pwm_fan ];then
 	FAN_CTRL=/sys/devices/pwm_fan/hwmon/hwmon0/pwm1
 elif [ -d /sys/devices/platform/pwm_fan ];then
 	FAN_CTRL=/sys/devices/platform/pwm_fan/hwmon/hwmon0/pwm1
+elif [ -d /sys/devices/platform/gpio-fan ];then
+	FAN_CTRL=/sys/devices/platform/gpio-fan/hwmon/hwmon3/pwm1
 else
 	exit 0
 fi

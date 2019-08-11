@@ -25,7 +25,7 @@ armada-xp-linksys-mamba)
 		"0:lan:4" "1:lan:3" "2:lan:2" "3:lan:1" "5@eth0" "4:wan" "6@eth1"
 	;;
 armada-385-nas1dual)
-	ucidef_set_interface_lan "eth0 eth1"
+	ucidef_set_interface_lan "eth0 eth1" "dhcp"
 	;;
 armada-385-turris-omnia)
 	ucidef_set_interface_lan "lan0 lan1 lan2 lan3 lan4"
