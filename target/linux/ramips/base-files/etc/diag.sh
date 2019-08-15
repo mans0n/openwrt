@@ -199,7 +199,8 @@ get_status_led() {
 	iptime,a1004ns|\
 	iptime,a104ns|\
 	iptime,a3|\
-	iptime,a604m)
+	iptime,a604m|\
+	iptime,a6ns-m)
 		status_led="$boardname:blue:cpu"
 		;;
 	iptime,extn3)

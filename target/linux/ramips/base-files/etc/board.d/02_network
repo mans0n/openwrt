@@ -197,6 +197,7 @@ ramips_setup_interfaces()
 	gl-mt300n|\
 	gl-mt750|\
 	hg255d|\
+	iptime,a6ns-m|\
 	jhr-n805r|\
 	jhr-n825r|\
 	jhr-n926r|\
@@ -489,6 +490,9 @@ ramips_setup_macs()
 	iptime,a104ns)
 		lan_mac=$(cat /sys/class/net/eth0/address)
 		wan_mac=$(macaddr_add "$lan_mac" 2)
+		;;
+	iptime,a6ns-m)
+		wan_mac=$(mtd_get_mac_binary u-boot 0x1fc40)
 		;;
 	kn_rc|\
 	kn_rf|\

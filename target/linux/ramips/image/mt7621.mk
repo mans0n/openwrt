@@ -198,6 +198,15 @@ define Device/d-team_newifi-d2
 endef
 TARGET_DEVICES += d-team_newifi-d2
 
+define Device/iptime_a6ns-m
+  DTS := A6NS-M
+  IMAGE_SIZE := 16128k
+  UIMAGE_NAME := a6nm
+  DEVICE_TITLE := ipTIME A6ns-M
+  DEVICE_PACKAGES := kmod-usb3 kmod-usb-ledtrig-usbport
+endef
+TARGET_DEVICES += iptime_a6ns-m
+
 define Device/pbr-m1
   DTS := PBR-M1
   IMAGE_SIZE := $(ralink_default_fw_size_16M)
