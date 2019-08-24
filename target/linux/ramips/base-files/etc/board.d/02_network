@@ -318,6 +318,10 @@ ramips_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0:lan" "4:lan" "6t@eth0"
 		;;
+	netis,wf2770)
+		ucidef_add_switch "switch1" \
+			"0:lan:1" "1:lan:2" "2:lan:3" "3:lan:4" "4:wan" "6@eth0"
+		;;
 	newifi-d1)
 		ucidef_add_switch "switch0" \
 		"1:lan:2" "2:lan:1" "4:wan" "6@eth0"
@@ -523,6 +527,9 @@ ramips_setup_macs()
 	x8)
 		lan_mac=$(cat /sys/class/net/eth0/address)
 		lan_mac=$(macaddr_add "$lan_mac" -2)
+		;;
+	netis,wf2770)
+		wan_mac=$(mtd_get_mac_binary factory 0x2e)
 		;;
 	newifi-d1)
 		lan_mac=$(cat /sys/class/net/eth0/address)

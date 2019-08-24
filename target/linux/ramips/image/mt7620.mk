@@ -419,6 +419,13 @@ define Device/na930
 endef
 TARGET_DEVICES += na930
 
+define Device/netis_wf2770
+  DTS := WF2770
+  IMAGE_SIZE := 16064k
+  DEVICE_TITLE := NETIS WF2770
+endef
+TARGET_DEVICES += netis_wf2770
+
 define Device/oy-0001
   DTS := OY-0001
   IMAGE_SIZE := $(ralink_default_fw_size_16M)

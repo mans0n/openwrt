@@ -121,6 +121,7 @@ platform_check_image() {
 	nbg-419n2|\
 	newifi-d1|\
 	d-team,newifi-d2|\
+	netis,wf2770|\
 	nixcore-x1-8M|\
 	nixcore-x1-16M|\
 	nw718|\
