@@ -43,6 +43,24 @@ define Build/add-elecom-factory-initramfs
   fi
 endef
 
+define Build/iptime_a804ns-mu-factory
+	dd if=/dev/zero of=$@.new bs=262144 count=1
+	echo -ne "EFMQC\x00\x00\x00a804nm\x00\x00" | dd of=$@.new seek=195584 oflag=seek_bytes conv=notrunc
+	echo -ne "\x1f\x28\x7f\xa8" | dd of=$@.new seek=195668 oflag=seek_bytes conv=notrunc
+	cat $@ >> $@.new
+	mv $@.new $@
+endef
+
+define Build/iptime_a804ns-mu-header
+	( \
+		echo -ne "a804nm\x00\x0000_000\x00\x00\x8b\x99\x8f\x9a\xc9\xfb\xfa\xf2"; \
+		dd if=/dev/zero bs=24 count=1; \
+		echo -ne "\x00\x00\x00\x00\xb9\xf0\xfa\xf2"; \
+	) > $@.new
+	cat $@ >> $@.new
+	mv $@.new $@
+endef
+
 define Build/nec-enc
   $(STAGING_DIR_HOST)/bin/nec-enc \
     -i $@ -o $@.new -k $(1)
@@ -647,6 +665,21 @@ define Device/iodata_wn-ag300dgr
   DEVICE_PACKAGES := kmod-usb-core kmod-usb2
 endef
 TARGET_DEVICES += iodata_wn-ag300dgr
+
+define Device/iptime_a804ns-mu
+  ATH_SOC := qca9561
+  DEVICE_VENDOR := ipTIME
+  DEVICE_MODEL := A804NS-MU
+  DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca9888-ct kmod-usb-core kmod-usb2
+  KERNEL_SIZE := 2048k
+  IMAGE_SIZE := 16064k
+  KERNEL := kernel-bin | append-dtb | lzma | uImage lzma | iptime_a804ns-mu-header
+  IMAGES := sysupgrade.bin factory.bin
+  IMAGE/sysupgrade.bin := append-kernel | pad-to $$$$(KERNEL_SIZE) | \
+    append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
+  IMAGE/factory.bin := $$(IMAGE/sysupgrade.bin) | iptime_a804ns-mu-factory
+endef
+TARGET_DEVICES += iptime_a804ns-mu
 
 define Device/jjplus_ja76pf2
   ATH_SOC := ar7161

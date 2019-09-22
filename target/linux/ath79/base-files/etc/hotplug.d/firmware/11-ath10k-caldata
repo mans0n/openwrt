@@ -201,6 +201,9 @@ case "$FIRMWARE" in
 		ln -sf /lib/firmware/ath10k/pre-cal-pci-0000\:00\:00.0.bin \
 			/lib/firmware/ath10k/QCA9888/hw2.0/board.bin
 		;;
+	iptime,a804ns-mu)
+		ath10kcal_extract "art" 0x5000 0x2f20
+		;;
 	netgear,ex6400|\
 	netgear,ex7300)
 		ath10kcal_extract "caldata" 0x5000 0x2f20
