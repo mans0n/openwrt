@@ -21,6 +21,7 @@
 #include <linux/slab.h>
 #include <linux/of.h>
 #include <linux/of_device.h>
+#include <linux/reset.h>
 
 #define AR934X_NFC_DRIVER_NAME		"ar934x-nand"
 
@@ -202,6 +203,8 @@ struct ar934x_nfc {
 	int seqin_page_addr;
 	int seqin_column;
 	int seqin_read_cmd;
+
+	struct reset_control *rst;
 };
 
 static inline __printf(2, 3)
@@ -994,8 +997,19 @@ static int ar934x_nfc_write_page(struct mtd_info *mtd, struct nand_chip *chip,
 	return err;
 }
 
+static int ar934x_nfc_hw_reset(struct ar934x_nfc *nfc, bool active) {
+	if (active) {
+		reset_control_assert(nfc->rst);
+	} else {
+		reset_control_deassert(nfc->rst);
+	}
+	udelay(250);
+}
+
 static int ar934x_nfc_hw_init(struct ar934x_nfc *nfc)
 {
+	ar934x_nfc_hw_reset(nfc, true);
+	ar934x_nfc_hw_reset(nfc, false);
 	/*
 	 * setup timings
 	 * TODO: make it configurable via platform data or DT
@@ -1365,6 +1379,12 @@ static int ar934x_nfc_probe(struct platform_device *pdev)
 	if (ret) {
 		dev_err(&pdev->dev, "devm_request_irq failed, err:%d\n", ret);
 		return ret;
+	}
+
+	nfc->rst = devm_reset_control_get(&pdev->dev, "nand");
+	if (IS_ERR(nfc->rst)) {
+		dev_err(&pdev->dev, "Failed to get reset\n");
+		return PTR_ERR(nfc->rst);
 	}
 
 	nfc->parent = &pdev->dev;
