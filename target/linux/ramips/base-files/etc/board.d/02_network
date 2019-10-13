@@ -592,8 +592,7 @@ ramips_setup_macs()
 		wan_mac=$(mtd_get_mac_binary factory 0x2e)
 		label_mac=$(cat /sys/class/ieee80211/phy0/macaddress)
 		;;
-	dlink,dch-m225|\
-	samsung,cy-swr1100)
+	dlink,dch-m225)
 		lan_mac=$(mtd_get_mac_ascii factory lanmac)
 		;;
 	dlink,dir-510l|\
@@ -617,7 +616,8 @@ ramips_setup_macs()
 		wan_mac=$(macaddr_add "$(cat /sys/class/net/eth0/address)" 1)
 		label_mac=$(cat /sys/class/ieee80211/phy0/macaddress)
 		;;
-	dlink,dir-645)
+	dlink,dir-645|\
+	samsung,cy-swr1100)
 		lan_mac=$(mtd_get_mac_ascii nvram lanmac)
 		wan_mac=$(mtd_get_mac_ascii nvram wanmac)
 		;;
