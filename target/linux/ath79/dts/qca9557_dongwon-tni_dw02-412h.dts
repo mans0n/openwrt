@@ -119,6 +119,35 @@
 	};
 };
 
+&nand {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		partition@0 {
+			label = "firmware";
+			reg = <0x0 0x8000000>;
+
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "kernel";
+				reg = <0x0 0x400000>;
+			};
+
+			partition@400000 {
+				label = "ubi";
+				reg = <0x400000 0x7c00000>;
+			};
+		};
+	};
+};
+
 &mdio0 {
 	status = "okay";
 

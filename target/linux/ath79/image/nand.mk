@@ -14,7 +14,7 @@ define Device/dongwon-tni_dw02-412h
   DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca988x-ct kmod-usb2
   BLOCKSIZE := 128k
   PAGESIZE := 2048
-  KERNEL_SIZE = 2048k
+  KERNEL_SIZE = 4096k
   IMAGE_SIZE := 131072k
   UIMAGE_NAME := ISQ-4000
   KERNEL := kernel-bin | append-dtb | lzma | uImage lzma | dongwon-tni_dw02-412h_header
