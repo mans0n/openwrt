@@ -143,9 +143,9 @@ ath79_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0@eth0" "1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1" "5:wan"
 		;;
-	dongwon-tni,dw02-412h|\
 	elecom,wrc-1750ghbk2-i|\
-	elecom,wrc-300ghbk2-i)
+	elecom,wrc-300ghbk2-i|\
+	tnie,dw02-412h)
 		ucidef_add_switch "switch0" \
 			"0@eth0" "2:lan:4" "3:lan:3" "4:lan:2" "5:lan:1" "1:wan"
 		;;
@@ -356,10 +356,6 @@ ath79_setup_macs()
 		lan_mac=$(mtd_get_mac_ascii devdata "lanmac")
 		wan_mac=$(mtd_get_mac_ascii devdata "wanmac")
 		;;
-	dongwon-tni,dw02-412h)
-		wan_mac=$(mtd_get_mac_binary art 0x6)
-		label_mac=$(mtd_get_mac_binary art 0x0)
-		;;
 	elecom,wrc-1750ghbk2-i|\
 	elecom,wrc-300ghbk2-i)
 		wan_mac=$(macaddr_add "$(mtd_get_mac_binary art 0x1002)" -2)
@@ -412,6 +408,10 @@ ath79_setup_macs()
 	rosinson,wr818)
 		wan_mac=$(mtd_get_mac_binary factory 0x0)
 		lan_mac=$(macaddr_setbit_la "$wan_mac")
+		;;
+	tnie,dw02-412h)
+		wan_mac=$(mtd_get_mac_binary art 0x6)
+		label_mac=$(mtd_get_mac_binary art 0x0)
 		;;
 	tplink,archer-a7-v5|\
 	tplink,archer-c7-v4|\

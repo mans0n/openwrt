@@ -44,11 +44,11 @@ platform_do_upgrade() {
 	adtran,bsap1840)
 		redboot_fis_do_upgrade "$1" vmlinux_2
 		;;
-	dongwon-tni,dw02-412h)
-		nand_do_upgrade "$1"
-		;;
 	jjplus,ja76pf2)
 		redboot_fis_do_upgrade "$1" linux
+		;;
+	tnie,dw02-412h)
+		nand_do_upgrade "$1"
 		;;
 	ubnt,routerstation|\
 	ubnt,routerstation-pro)

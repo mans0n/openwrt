@@ -7,8 +7,8 @@
 #include "qca9557.dtsi"
 
 / {
-	compatible = "dongwon-tni,dw02-412h", "qca,qca9557";
-	model = "Dongwon TNI DW02-412H";
+	compatible = "tnie,dw02-412h", "qca,qca9557";
+	model = "T&Ie DW02-412H";
 
 	aliases {
 		led-boot = &led_wan;

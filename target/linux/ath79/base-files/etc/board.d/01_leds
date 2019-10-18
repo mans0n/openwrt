@@ -77,9 +77,6 @@ dlink,dir-842-c3|\
 dlink,dir-859-a1)
 	ucidef_set_led_switch "internet" "WAN" "$boardname:green:internet" "switch0" "0x20"
 	;;
-dongwon-tni,dw02-412h)
-	ucidef_set_led_switch "wan" "WAN" "$boardname:green:wan" "switch0" "0x02"
-	;;
 engenius,ecb1750)
 	ucidef_set_led_netdev "lan" "LAN" "$boardname:blue:lan" "eth0"
 	;;
@@ -123,6 +120,9 @@ pcs,cr3000)
 	;;
 qihoo,c301)
 	ucidef_set_led_wlan "wlan" "WLAN" "$boardname:green:wlan" "phy0tpt"
+	;;
+tnie,dw02-412h)
+	ucidef_set_led_switch "wan" "WAN" "$boardname:green:wan" "switch0" "0x02"
 	;;
 tplink,archer-a7-v5|\
 tplink,archer-c7-v4|\
