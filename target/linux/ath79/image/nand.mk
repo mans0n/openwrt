@@ -1,9 +1,11 @@
 define Build/dongwon-tni_dw02-412h_header
-  dd if=$@ of=$@.new bs=1 count=4
-  echo -ne '\x00\x00\x00\x00\x00\x03\x00\x00' | dd of=$@.new bs=1 seek=4 conv=notrunc
-  dd if=$@ of=$@.new bs=1 count=56 skip=8 seek=12 conv=notrunc
-  crc32 $@.new | xxd -r -p | dd of=$@.new bs=1 seek=4 conv=notrunc
-  dd if=$@ of=$@.new bs=4k skip=64 iflag=skip_bytes oflag=append conv=notrunc
+  dd if=$@ of=$@.new bs=4 count=1 2>/dev/null
+  dd if=/dev/zero of=$@.new bs=8 count=1 oflag=append conv=notrunc 2>/dev/null
+  dd if=$@ of=$@.new skip=8 iflag=skip_bytes oflag=append conv=notrunc 2>/dev/null
+  ( \
+    header_crc="$$(dd if=$@.new bs=68 count=1 2>/dev/null | gzip -c | tail -c 8 | hexdump -v -n 4 -e '1/4 "%02x"')"; \
+    echo -ne "$$(echo $$header_crc | sed 's/../\\x&/g')" | dd of=$@.new bs=4 seek=1 conv=notrunc 2>/dev/null; \
+  )
   mv $@.new $@
 endef
 
@@ -19,8 +21,10 @@ define Device/dongwon-tni_dw02-412h
   UIMAGE_NAME := ISQ-4000
   KERNEL := kernel-bin | append-dtb | lzma | uImage lzma | dongwon-tni_dw02-412h_header
   KERNEL_INITRAMFS := $$(KERNEL)
-  IMAGES := sysupgrade.tar
-  IMAGE/sysupgrade.tar := sysupgrade-tar
+  IMAGES += factory.bin
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  IMAGE/factory.bin := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | check-size $$$$(IMAGE_SIZE)
+  UBINIZE_OPTS := -E 5
 endef
 TARGET_DEVICES += dongwon-tni_dw02-412h
 

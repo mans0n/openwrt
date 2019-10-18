@@ -11,9 +11,9 @@
 	model = "Dongwon TNI DW02-412H";
 
 	aliases {
-		led-boot = &led_wifi;
-		led-failsafe = &led_wifi;
-		led-upgrade = &led_wifi;
+		led-boot = &led_wan;
+		led-failsafe = &led_wan;
+		led-upgrade = &led_wan;
 	};
 
 	chosen {
@@ -23,13 +23,13 @@
 	leds {
 		compatible = "gpio-leds";
 
-		led_wifi: wifi {
+		wifi {
 			label = "dw02-412h:green:wifi";
 			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
 			linux,default-trigger = "phy1tpt";
 		};
 
-		wan {
+		led_wan: wan {
 			label = "dw02-412h:green:wan";
 			gpios = <&gpio 22 GPIO_ACTIVE_LOW>;
 		};
@@ -87,26 +87,14 @@
 			};
 
 			partition@60000 {
-				label = "recovery-kernel";
-				reg = <0x60000 0xe0000>;
-				read-only;
-			};
-
-			partition@140000 {
-				label = "recovery-rootfs";
-				reg = <0x140000 0x90000>;
+				label = "recovery";
+				reg = <0x60000 0x170000>;
 				read-only;
 			};
 
 			partition@1d0000 {
 				label = "nvram";
-				reg = <0x1d0000 0x10000>;
-				read-only;
-			};
-
-			partition@1e0000 {
-				label = "nvram-backup";
-				reg = <0x1e0000 0x10000>;
+				reg = <0x1d0000 0x20000>;
 				read-only;
 			};
 
@@ -179,7 +167,7 @@
 	status = "okay";
 
 	wifi@0,0 {
-		compatible = "pci168c,003c";
+		compatible = "qcom,ath10k";
 		reg = <0x0000 0 0 0 0>;
 	};
 };

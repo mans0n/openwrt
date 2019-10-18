@@ -358,6 +358,7 @@ ath79_setup_macs()
 		;;
 	dongwon-tni,dw02-412h)
 		wan_mac=$(mtd_get_mac_binary art 0x6)
+		label_mac=$(mtd_get_mac_binary art 0x0)
 		;;
 	elecom,wrc-1750ghbk2-i|\
 	elecom,wrc-300ghbk2-i)
