@@ -1,0 +1,136 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+#include "ar7241.dtsi"
+
+/ {
+	compatible = "lge,napl-5000", "qca,ar7241";
+	model = "LG Electronics NAPL-5000";
+
+	aliases {
+		led-boot = &led_power;
+		led-failsafe = &led_power;
+		led-running = &led_power;
+		led-upgrade = &led_power;
+		label-mac-device = &eth0;
+	};
+
+	keys {
+		compatible = "gpio-keys";
+
+		reset {
+			label = "reset";
+			linux,code = <KEY_RESTART>;
+			gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
+			debounce-interval = <60>;
+		};
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		led_power: power {
+			label = "napl-5000:red:power";
+			gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	ath9k-leds {
+		compatible = "gpio-leds";
+
+		wlan {
+			label = "napl-5000:green:wlan";
+			gpios = <&ath9k 0 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "phy0tpt";
+		};
+	};
+};
+
+&spi {
+	status = "okay";
+	num-cs = <1>;
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <25000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				reg = <0x0 0x40000>;
+				label = "u-boot";
+				read-only;
+			};
+
+			partition@40000 {
+				reg = <0x40000 0x10000>;
+				label = "u-boot-env";
+			};
+
+			partition@50000 {
+				reg = <0x50000 0x7a0000>;
+				label = "firmware";
+
+				compatible = "fixed-partitions";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				partition@0 {
+					reg = <0x0 0x200000>;
+					label = "kernel";
+				};
+
+				partition@400000 {
+					reg = <0x200000 0x5a0000>;
+					label = "rootfs";
+				};
+			};
+
+			art: partition@7f0000 {
+				reg = <0x7f0000 0x10000>;
+				label = "art";
+				read-only;
+			};
+		};
+	};
+};
+
+&pcie {
+	status = "okay";
+
+	ath9k: wifi@0,0 {
+		compatible = "pci168c,002e";
+		reg = <0x0000 0 0 0 0>;
+		qca,no-eeprom;
+		#gpio-cells = <2>;
+		gpio-controller;
+	};
+};
+
+&eth0 {
+	status = "okay";
+
+	mtd-mac-address = <&art 0x110c>;
+	mtd-mac-address-increment = <3>;
+};
+
+&eth1 {
+	status = "okay";
+
+	mtd-mac-address = <&art 0x110c>;
+};
+
+&gpio {
+	status = "okay";
+};
+
+&uart {
+	status = "okay";
+};

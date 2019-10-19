@@ -61,6 +61,24 @@ define Build/iptime_a804ns-mu-header
 	mv $@.new $@
 endef
 
+define Build/lge_napl-5000_header
+  dd if=$@ of=$@.new seek=$$((0x100)) oflag=seek_bytes
+  echo -ne "\x13\x97\x21\x74" | dd of=$@.new conv=notrunc
+  echo -ne "\x01" | dd of=$@.new bs=1 seek=$$((0x2f)) conv=notrunc
+  echo -n "NAPL-5000" | dd of=$@.new bs=1 seek=$$((0x70)) conv=notrunc
+  mv $@.new $@
+endef
+
+define Build/lge_napl-5000_factory
+  dd if=$@ of=$@.new bs=$$((0x780000)) conv=sync
+  ( \
+    header_crc="$$(dd if=$@.new bs=$$((0x50ff00)) count=1 skip=$$((0x100)) iflag=skip_bytes 2>/dev/null \
+      | gzip -c | tail -c 8 | hexdump -v -n 4 -e '1/4 "%02x"')"; \
+    echo -ne "$$(echo $$header_crc | sed 's/../\\x&/g')" | dd of=$@.new bs=1 seek=$$((0x20)) conv=notrunc 2>/dev/null; \
+  )
+  mv $@.new $@
+endef
+
 define Build/nec-enc
   $(STAGING_DIR_HOST)/bin/nec-enc \
     -i $@ -o $@.new -k $(1)
@@ -695,6 +713,20 @@ define Device/jjplus_ja76pf2
   SUPPORTED_DEVICES += ja76pf2
 endef
 TARGET_DEVICES += jjplus_ja76pf2
+
+define Device/lge_napl-5000
+  ATH_SOC := ar7241
+  DEVICE_VENDOR := LG Electronics
+  DEVICE_MODEL := NAPL-5000
+  DEVICE_PACKAGES :=
+  KERNEL_SIZE := 2048k
+  IMAGE_SIZE := 7808k
+  KERNEL := kernel-bin | append-dtb | lzma | uImage lzma | lge_napl-5000_header
+  KERNEL_INITRAMFS := $$(KERNEL) | lge_napl-5000_factory
+  IMAGE/sysupgrade.bin := append-kernel | pad-to $$$$(KERNEL_SIZE) | \
+    append-rootfs | pad-rootfs | append-metadata | check-size $$$$(IMAGE_SIZE)
+endef
+TARGET_DEVICES += lge_napl-5000
 
 define Device/librerouter_librerouter-v1
   ATH_SOC := qca9558

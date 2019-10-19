@@ -150,7 +150,8 @@ case "$FIRMWARE" in
 	tplink,tl-wr941-v4)
 		ath9k_eeprom_extract "art" 0x1000 0xeb8
 		;;
-	buffalo,wzr-hp-g450h)
+	buffalo,wzr-hp-g450h|\
+	lge,napl-5000)
 		ath9k_eeprom_extract "art" 0x1000 0x440
 		;;
 	dlink,dir-825-c1|\
