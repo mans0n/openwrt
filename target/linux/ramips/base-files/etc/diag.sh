@@ -206,6 +206,9 @@ get_status_led() {
 	iptime,extn3)
 		status_led="$boardname:blue:status"
 		;;
+	iptime,n604-black)
+		status_led="$boardname:orange:cpu"
+		;;
 	linkits7688)
 		status_led="linkit-smart-7688:orange:wifi"
 		;;

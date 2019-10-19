@@ -85,6 +85,7 @@ platform_check_image() {
 	iptime,a604m|\
 	iptime,a6ns-m|\
 	iptime,extn3|\
+	iptime,n604-black|\
 	jhr-n805r|\
 	jhr-n825r|\
 	jhr-n926r|\

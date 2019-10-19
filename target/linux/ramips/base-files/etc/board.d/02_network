@@ -233,7 +233,8 @@ ramips_setup_interfaces()
 	elecom,wrc-1167ghbk2-s|\
 	iodata,wn-gx300gr|\
 	iptime,a104ns|\
-	iptime,a604m)
+	iptime,a604m|\
+	iptime,n604-black)
 		ucidef_add_switch "switch0" \
 			"1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1" "0:wan" "6@eth0"
 		;;
@@ -494,7 +495,8 @@ ramips_setup_macs()
 	iptime,a1004ns|\
 	iptime,a3|\
 	iptime,a604m|\
-	iptime,a6ns-m)
+	iptime,a6ns-m|\
+	iptime,n604-black)
 		wan_mac=$(mtd_get_mac_binary u-boot 0x1fc40)
 		;;
 	iptime,a104ns)
