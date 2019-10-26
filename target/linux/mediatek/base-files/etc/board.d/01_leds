@@ -1,0 +1,18 @@
+#!/bin/sh
+
+. /lib/functions/uci-defaults.sh
+
+board_config_update
+
+board=$(board_name)
+
+case "$board" in
+iptime,a8004ns-m-emmc)
+	# ucidef_set_led_usbport "usb2" "USB" "a8004ns-m:blue:usb2" "usb3-port1"
+	# ucidef_set_led_usbport "usb3" "USB SS" "a8004ns-m:blue:usb3" "usb1-port1" "usb2-port1"
+	;;
+esac
+
+board_config_flush
+
+exit 0

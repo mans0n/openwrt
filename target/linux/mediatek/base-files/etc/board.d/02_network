@@ -9,13 +9,13 @@ mediatek_setup_interfaces()
 	local board="$1"
 
 	case $board in
-	'mediatek,mt7623a-rfb-emmc')
-		ucidef_set_interface_lan "lan0 lan1 lan2 lan3"
-		ucidef_set_interface_wan eth1
-		;;
-	'bananapi,bpi-r2'|\
+	"bananapi,bpi-r2"|\
+	"iptime,a8004ns-m-emmc"|\
 	"unielec,u7623"*)
 		ucidef_set_interfaces_lan_wan "lan0 lan1 lan2 lan3" "wan"
+		;;
+	"mediatek,mt7623a-rfb-emmc")
+		ucidef_set_interfaces_lan_wan "lan0 lan1 lan2 lan3" "eth1"
 		;;
 	esac
 }
@@ -23,13 +23,21 @@ mediatek_setup_interfaces()
 mediatek_setup_macs()
 {
 	local board="$1"
+	local lan_mac=""
+	local wan_mac=""
 
 	case $board in
+	"iptime,a8004ns-m-emmc")
+		lan_mac=$(get_mac_binary /dev/mmcblk0 0xbfc20)
+		wan_mac=$(get_mac_binary /dev/mmcblk0 0xbfc40)
+		;;
 	"unielec,u7623"*)
-		mac=$(cat /sys/class/net/wan/address)
-		ucidef_set_interface_macaddr "wan" $mac
+		wan_mac=$(cat /sys/class/net/wan/address)
 		;;
 	esac
+
+	[ -n "$lan_mac" ] && ucidef_set_interface_macaddr "lan" $lan_mac
+	[ -n "$wan_mac" ] && ucidef_set_interface_macaddr "wan" $wan_mac
 }
 
 board_config_update

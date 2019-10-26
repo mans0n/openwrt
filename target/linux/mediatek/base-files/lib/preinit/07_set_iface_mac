@@ -10,6 +10,16 @@ preinit_set_mac_address() {
 	. /lib/functions/system.sh
 
 	case $(board_name) in
+	"iptime,a8004ns-m-emmc")
+		mac=$(get_mac_binary /dev/mmcblk0 0xbfc20)
+		ip link set dev lan0 address $mac 2>/dev/null
+		ip link set dev lan1 address $mac 2>/dev/null
+		ip link set dev lan2 address $mac 2>/dev/null
+		ip link set dev lan3 address $mac 2>/dev/null
+
+		mac=$(get_mac_binary /dev/mmcblk0 0xbfc40)
+		ip link set dev wan address $mac 2> /dev/null
+		;;
 	"unielec,u7623"*)
 		if [ -b $RECOVERY_PART ]; then
 			insmod nls_cp437

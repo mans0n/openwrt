@@ -1,0 +1,442 @@
+/*
+ * Copyright 2019 Sungbo Eo <mans0n@gorani.run>
+ *
+ * Based on Unielec U7623-02 dts
+ * Copyright 2018 Kristian Evensen <kristian.evensen@gmail.com>
+ *
+ * SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+ */
+
+/dts-v1/;
+#include <dt-bindings/input/input.h>
+#include "mt7623.dtsi"
+#include "mt6323.dtsi"
+
+/ {
+	model = "ipTIME A8004NS-M (eMMC)";
+	compatible = "iptime,a8004ns-m-emmc", "iptime,a8004ns-m", "mediatek,mt7623";
+
+	aliases {
+		serial2 = &uart2;
+		led-boot = &led_cpu;
+		led-failsafe = &led_cpu;
+		led-running = &led_cpu;
+		led-upgrade = &led_cpu;
+	};
+
+	chosen {
+		// bootargs = "root=/dev/mmcblk0p2 rootfstype=squashfs,f2fs";
+		stdout-path = "serial2:115200n8";
+	};
+
+	memory {
+		device_type = "memory";
+		reg = <0 0x80000000 0 0x40000000>;
+	};
+
+	cpus {
+		cpu@0 {
+			proc-supply = <&mt6323_vproc_reg>;
+		};
+
+		cpu@1 {
+			proc-supply = <&mt6323_vproc_reg>;
+		};
+
+		cpu@2 {
+			proc-supply = <&mt6323_vproc_reg>;
+		};
+
+		cpu@3 {
+			proc-supply = <&mt6323_vproc_reg>;
+		};
+	};
+
+	reg_3p3v: regulator-3p3v {
+		compatible = "regulator-fixed";
+		regulator-name = "fixed-3.3V";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	reg_5v: regulator-5v {
+		compatible = "regulator-fixed";
+		regulator-name = "fixed-5V";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	keys {
+		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&key_pins_a>;
+
+		rfkill {
+			label = "rfkill";
+			linux,input-type = <EV_SW>;
+			linux,code = <KEY_RFKILL>;
+			gpios = <&pio 20 GPIO_ACTIVE_HIGH>;
+		};
+
+		ledswitch {
+			label = "ledswitch";
+			linux,input-type = <EV_SW>;
+			linux,code = <KEY_LIGHTS_TOGGLE>;
+			gpios = <&pio 55 GPIO_ACTIVE_HIGH>;
+		};
+
+		wps {
+			label = "wps";
+			linux,code = <KEY_WPS_BUTTON>;
+			gpios = <&pio 256 GPIO_ACTIVE_LOW>;
+		};
+
+		reset {
+			label = "reset";
+			linux,code = <KEY_RESTART>;
+			gpios = <&pio 257 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&led_pins_a>;
+
+		wlan2g {
+			label = "a8004ns-m:blue:wlan2g";
+			// linux,default-trigger = "phy0tpt";
+			gpios = <&pio 53 GPIO_ACTIVE_HIGH>;
+		};
+
+		wlan5g {
+			label = "a8004ns-m:blue:wlan5g";
+			// linux,default-trigger = "phy1tpt";
+			gpios = <&pio 54 GPIO_ACTIVE_HIGH>;
+		};
+
+		usb2 {
+			label = "a8004ns-m:blue:usb2";
+			trigger-sources = <&u3phy2_port1>;
+			linux,default-trigger = "usbport";
+			gpios = <&pio 56 GPIO_ACTIVE_HIGH>;
+		};
+
+		usb3 {
+			label = "a8004ns-m:blue:usb3";
+			trigger-sources = <&u3phy1_port1>;
+			linux,default-trigger = "usbport";
+			gpios = <&pio 74 GPIO_ACTIVE_HIGH>;
+		};
+
+		led_cpu: cpu {
+			label = "a8004ns-m:blue:cpu";
+			gpios = <&pio 126 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	gpio-fan {
+		compatible = "gpio-fan";
+		pinctrl-names = "default";
+		pinctrl-0 = <&fan_pins_a>;
+		gpios = <&pio 18 GPIO_ACTIVE_HIGH
+			 &pio 19 GPIO_ACTIVE_HIGH>;
+		gpio-fan,speed-map = <0    0
+				      3800 1
+				      5000 2>;
+		#cooling-cells = <2>;
+	};
+
+	mt7530: switch@0 {
+		compatible = "mediatek,mt7530";
+	};
+};
+
+&crypto {
+	status = "okay";
+};
+
+&eth {
+	status = "okay";
+
+	gmac1: mac@1 {
+		compatible = "mediatek,eth-mac";
+		reg = <1>;
+		phy-mode = "rgmii";
+
+		fixed-link {
+			speed = <1000>;
+			full-duplex;
+			pause;
+		};
+	};
+
+	mdio: mdio-bus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+	};
+};
+
+&mt7530 {
+	compatible = "mediatek,mt7530";
+	#address-cells = <1>;
+	#size-cells = <0>;
+	reg = <0>;
+	pinctrl-names = "default";
+	mediatek,mcm;
+	resets = <&ethsys 2>;
+	reset-names = "mcm";
+	core-supply = <&mt6323_vpa_reg>;
+	io-supply = <&mt6323_vemc3v3_reg>;
+
+	dsa,mii-bus = <&mdio>;
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0>;
+
+		port@0 {
+			reg = <0>;
+			label = "lan0";
+			cpu = <&cpu_port1>;
+		};
+
+		port@1 {
+			reg = <1>;
+			label = "lan1";
+			cpu = <&cpu_port1>;
+		};
+
+		port@2 {
+			reg = <2>;
+			label = "lan2";
+			cpu = <&cpu_port1>;
+		};
+
+		port@3 {
+			reg = <3>;
+			label = "lan3";
+			cpu = <&cpu_port1>;
+		};
+
+		port@4 {
+			reg = <4>;
+			label = "wan";
+			cpu = <&cpu_port1>;
+		};
+
+		cpu_port1: port@5 {
+			reg = <5>;
+			label = "cpu";
+			ethernet = <&gmac1>;
+			phy-mode = "rgmii";
+
+			fixed-link {
+				speed = <1000>;
+				full-duplex;
+			};
+		};
+	};
+};
+
+&i2c1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c1_pins_b>;
+	status = "okay";
+};
+
+&mmc0 {
+	pinctrl-names = "default", "state_uhs";
+	pinctrl-0 = <&mmc0_pins_default>;
+	pinctrl-1 = <&mmc0_pins_uhs>;
+	status = "okay";
+	bus-width = <8>;
+	max-frequency = <50000000>;
+	cap-mmc-highspeed;
+	vmmc-supply = <&mt6323_vemc3v3_reg>;
+	vqmmc-supply = <&mt6323_vio18_reg>;
+	non-removable;
+};
+
+&pio {
+	i2c1_pins_b: i2c1-alt {
+		pin-i2c1 {
+			pinmux = <MT7623_PIN_242_URTS2_FUNC_SCL1>,
+				 <MT7623_PIN_243_UCTS2_FUNC_SDA1>;
+			bias-disable;
+		};
+	};
+
+	key_pins_a: keys-alt {
+		pins-keys {
+			pinmux = <MT7623_PIN_20_PCM_RX_FUNC_GPIO20>,
+				 <MT7623_PIN_55_SPI0_MI_FUNC_GPIO55>,
+				 <MT7623_PIN_256_GPIO256_FUNC_GPIO256>,
+				 <MT7623_PIN_257_GPIO257_FUNC_GPIO257>;
+			input-enable;
+		};
+	};
+
+	led_pins_a: leds-alt {
+		pins-leds {
+			pinmux = <MT7623_PIN_53_SPI0_CSN_FUNC_GPIO53>,
+				 <MT7623_PIN_54_SPI0_CK_FUNC_GPIO54>,
+				 <MT7623_PIN_56_SPI0_MO_FUNC_GPIO56>,
+				 <MT7623_PIN_74_I2S0_BCK_FUNC_GPIO74>,
+				 <MT7623_PIN_126_I2S0_MCLK_FUNC_GPIO126>;
+		};
+	};
+
+	fan_pins_a: fan-alt {
+		pins-fan {
+			pinmux = <MT7623_PIN_18_PCM_CLK_FUNC_GPIO18>,
+				 <MT7623_PIN_19_PCM_SYNC_FUNC_GPIO19>;
+		};
+	};
+
+	mmc0_pins_default: mmc0default {
+		pins-cmd-dat {
+			pinmux = <MT7623_PIN_111_MSDC0_DAT7_FUNC_MSDC0_DAT7>,
+				 <MT7623_PIN_112_MSDC0_DAT6_FUNC_MSDC0_DAT6>,
+				 <MT7623_PIN_113_MSDC0_DAT5_FUNC_MSDC0_DAT5>,
+				 <MT7623_PIN_114_MSDC0_DAT4_FUNC_MSDC0_DAT4>,
+				 <MT7623_PIN_118_MSDC0_DAT3_FUNC_MSDC0_DAT3>,
+				 <MT7623_PIN_119_MSDC0_DAT2_FUNC_MSDC0_DAT2>,
+				 <MT7623_PIN_120_MSDC0_DAT1_FUNC_MSDC0_DAT1>,
+				 <MT7623_PIN_121_MSDC0_DAT0_FUNC_MSDC0_DAT0>,
+				 <MT7623_PIN_116_MSDC0_CMD_FUNC_MSDC0_CMD>;
+			input-enable;
+			bias-pull-up;
+		};
+
+		pins-clk {
+			pinmux = <MT7623_PIN_117_MSDC0_CLK_FUNC_MSDC0_CLK>;
+			bias-pull-down;
+		};
+
+		pins-rst {
+			pinmux = <MT7623_PIN_115_MSDC0_RSTB_FUNC_MSDC0_RSTB>;
+			bias-pull-up;
+		};
+	};
+
+	mmc0_pins_uhs: mmc0 {
+		pins-cmd-dat {
+			pinmux = <MT7623_PIN_111_MSDC0_DAT7_FUNC_MSDC0_DAT7>,
+				 <MT7623_PIN_112_MSDC0_DAT6_FUNC_MSDC0_DAT6>,
+				 <MT7623_PIN_113_MSDC0_DAT5_FUNC_MSDC0_DAT5>,
+				 <MT7623_PIN_114_MSDC0_DAT4_FUNC_MSDC0_DAT4>,
+				 <MT7623_PIN_118_MSDC0_DAT3_FUNC_MSDC0_DAT3>,
+				 <MT7623_PIN_119_MSDC0_DAT2_FUNC_MSDC0_DAT2>,
+				 <MT7623_PIN_120_MSDC0_DAT1_FUNC_MSDC0_DAT1>,
+				 <MT7623_PIN_121_MSDC0_DAT0_FUNC_MSDC0_DAT0>,
+				 <MT7623_PIN_116_MSDC0_CMD_FUNC_MSDC0_CMD>;
+			input-enable;
+			drive-strength = <MTK_DRIVE_2mA>;
+			bias-pull-up = <MTK_PUPD_SET_R1R0_01>;
+		};
+
+		pins-clk {
+			pinmux = <MT7623_PIN_117_MSDC0_CLK_FUNC_MSDC0_CLK>;
+			drive-strength = <MTK_DRIVE_2mA>;
+			bias-pull-down = <MTK_PUPD_SET_R1R0_01>;
+		};
+
+		pins-rst {
+			pinmux = <MT7623_PIN_115_MSDC0_RSTB_FUNC_MSDC0_RSTB>;
+			bias-pull-up;
+		};
+	};
+
+	uart2_pins_b: uart2-alt {
+		pins-dat {
+			pinmux = <MT7623_PIN_200_URXD2_FUNC_URXD2>,
+				 <MT7623_PIN_201_UTXD2_FUNC_UTXD2>;
+		};
+	};
+
+	pcie_default: pcie_pin_default {
+		pins_cmd_dat {
+			pinmux = <MT7623_PIN_208_AUD_EXT_CK1_FUNC_PCIE0_PERST_N>,
+				 <MT7623_PIN_209_AUD_EXT_CK2_FUNC_PCIE1_PERST_N>;
+			bias-disable;
+		};
+	};
+};
+
+&uart2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart2_pins_b>;
+	status = "okay";
+};
+
+&usb1 {
+	vusb33-supply = <&reg_3p3v>;
+	vbus-supply = <&reg_5v>;
+	status = "okay";
+
+	u3phy1_port1: port@1 {
+		reg = <1>;
+		#trigger-source-cells = <0>;
+	};
+};
+
+&usb2 {
+	vusb33-supply = <&reg_3p3v>;
+	vbus-supply = <&reg_5v>;
+	status = "okay";
+
+	u3phy2_port1: port@1 {
+		reg = <1>;
+		#trigger-source-cells = <0>;
+	};
+};
+
+&u3phy1 {
+	status = "okay";
+};
+
+&u3phy2 {
+	status = "okay";
+};
+
+&pcie {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pcie_default>;
+	status = "okay";
+
+	pcie@0,0 {
+		status = "okay";
+
+		wifi@0,0 {
+			compatible = "mediatek,mt76";
+			reg = <0x0000 0 0 0 0>;
+			// mediatek,mtd-eeprom = <&factory 0x0>;
+			// ieee80211-freq-limit = <2400000 2500000>;
+		};
+	};
+
+	pcie@1,0 {
+		status = "okay";
+
+		wifi@0,0 {
+			compatible = "mediatek,mt76";
+			reg = <0x0000 0 0 0 0>;
+			// mediatek,mtd-eeprom = <&factory 0x8000>;
+			// ieee80211-freq-limit = <5000000 6000000>;
+		};
+	};
+};
+
+&pcie0_phy {
+	status = "okay";
+};
+
+&pcie1_phy {
+	status = "okay";
+};
