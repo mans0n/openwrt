@@ -121,6 +121,11 @@ macaddr_setbit_la() {
 	printf "%02x:%s" $((0x${mac%%:*} | 0x02)) ${mac#*:}
 }
 
+macaddr_unsetbit_ma() {
+	local mac=$1
+	printf "%02x:%s" $((0x${mac%%:*} & ~0x01)) ${mac#*:}
+}
+
 macaddr_2bin() {
 	local mac=$1
 

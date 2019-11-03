@@ -9,6 +9,7 @@ set_preinit_iface() {
 	glinet,gl-b1300| \
 	linksys,ea8300| \
 	meraki,mr33| \
+	tnie,ti04-708h| \
 	zyxel,nbg6617)
 		ifname=eth0
 		;;

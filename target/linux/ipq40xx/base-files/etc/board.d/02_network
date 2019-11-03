@@ -61,6 +61,13 @@ ipq40xx_setup_interfaces()
 		ucidef_add_switch "switch0" \
 			"0u@eth0" "3:lan" "4:lan" "0u@eth1" "5:wan"
 		;;
+	tnie,ti04-708h)
+		ucidef_set_interfaces_lan_wan "eth0" "eth1"
+		# ucidef_add_switch "switch0" \
+		# 	"0u@eth0" "2:lan:4" "3:lan:3" "4:lan:2" "5:lan:1" "0u@eth1" "1:wan"
+		# ucidef_add_switch "switch0" \
+		# 	"2:lan:4" "3:lan:3" "4:lan:2" "5:lan:1" "1:wan" "0@eth0"
+		;;
 	*)
 		echo "Unsupported hardware. Network interfaces not initialized"
 		;;
@@ -84,6 +91,10 @@ ipq40xx_setup_macs()
 	linksys,ea6350v3)
 		wan_mac=$(mtd_get_mac_ascii devinfo hw_mac_addr)
 		lan_mac=$(macaddr_add "$wan_mac" 1)
+		;;
+	tnie,ti04-708h)
+		wan_mac=$(macaddr_add $(macaddr_unsetbit_ma $(mtd_get_mac_ascii APPSBLENV base_mac)) 1)
+		lan_mac=$(macaddr_add $(macaddr_unsetbit_ma $(mtd_get_mac_ascii APPSBLENV base_mac)) 2)
 		;;
 	esac
 
