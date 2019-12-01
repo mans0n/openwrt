@@ -12,6 +12,7 @@ ath79_setup_interfaces()
 	adtran,bsap1800-v2|\
 	adtran,bsap1840|\
 	alfa-network,ap121f|\
+	arduino,yun|\
 	aruba,ap-105|\
 	avm,fritz300e|\
 	devolo,dvl1200i|\

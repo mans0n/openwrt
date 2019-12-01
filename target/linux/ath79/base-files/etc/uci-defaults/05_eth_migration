@@ -1,0 +1,16 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /lib/functions/migrations.sh
+
+board=$(board_name)
+
+case "$board" in
+arduino,yun)
+	migrate_eths "eth1=eth0"
+	;;
+esac
+
+migrations_apply network
+
+exit 0

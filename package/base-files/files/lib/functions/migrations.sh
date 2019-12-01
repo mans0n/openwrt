@@ -2,6 +2,35 @@
 
 . /lib/functions.sh
 
+migrate_eth_iface() {
+	local cfg="$1"; shift
+	local opt="$1"; shift
+	local tuples="$@"
+	local iface
+
+	config_get iface ${cfg} ${opt}
+
+	[ -z "${iface}" ] && return
+
+	for tuple in ${tuples}; do
+		local old=${tuple%=*}
+		local new=${tuple#*=}
+		local new_iface
+
+		new_iface=$(echo ${iface} | sed -r "s/${old}([ .]{1})/${new}\1/g; s/${old}$/${new}/")
+
+		[ "${new_iface}" = "${iface}" ] && continue
+
+		uci set network.${cfg}.${opt}="${new_iface}"
+	done;
+}
+
+migrate_eths() {
+	config_load network
+	config_foreach migrate_eth_iface interface ifname "$@"
+	config_foreach migrate_eth_iface device name "$@"
+}
+
 migrate_led_sysfs() {
 	local cfg="$1"; shift
 	local tuples="$@"
