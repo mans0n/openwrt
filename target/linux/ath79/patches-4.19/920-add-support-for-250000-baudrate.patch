@@ -1,0 +1,53 @@
+--- a/drivers/tty/serial/serial_core.c
++++ b/drivers/tty/serial/serial_core.c
+@@ -219,6 +219,8 @@ static int uart_port_startup(struct tty_
+ 	if (retval == 0) {
+ 		if (uart_console(uport) && uport->cons->cflag) {
+ 			tty->termios.c_cflag = uport->cons->cflag;
++			tty->termios.c_ospeed = uport->cons->baud;
++			tty->termios.c_ispeed = uport->cons->baud;
+ 			uport->cons->cflag = 0;
+ 		}
+ 		/*
+@@ -2058,8 +2060,10 @@ uart_set_options(struct uart_port *port,
+ 	 * Allow the setting of the UART parameters with a NULL console
+ 	 * too:
+ 	 */
+-	if (co)
++	if (co) {
+ 		co->cflag = termios.c_cflag;
++		co->baud = baud;
++	}
+ 
+ 	return 0;
+ }
+--- a/drivers/tty/tty_baudrate.c
++++ b/drivers/tty/tty_baudrate.c
+@@ -23,7 +23,7 @@ static const speed_t baud_table[] = {
+ 	76800, 153600, 307200, 614400, 921600
+ #else
+ 	500000, 576000, 921600, 1000000, 1152000, 1500000, 2000000,
+-	2500000, 3000000, 3500000, 4000000
++	2500000, 3000000, 3500000, 4000000, 250000
+ #endif
+ };
+ 
+@@ -33,7 +33,7 @@ static const tcflag_t baud_bits[] = {
+ 	B1200, B1800, B2400, B4800, B9600, B19200, B38400,
+ 	B57600, B115200, B230400, B460800, B500000, B576000,
+ 	B921600, B1000000, B1152000, B1500000, B2000000, B2500000,
+-	B3000000, B3500000, B4000000
++	B3000000, B3500000, B4000000, BOTHER
+ };
+ #else
+ static const tcflag_t baud_bits[] = {
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -153,6 +153,7 @@ struct console {
+ 	short	flags;
+ 	short	index;
+ 	int	cflag;
++	int	baud;
+ 	void	*data;
+ 	struct	 console *next;
+ };
