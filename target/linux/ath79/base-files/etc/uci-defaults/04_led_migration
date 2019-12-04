@@ -27,6 +27,9 @@ tplink,re355-v1)
 tplink,re450-v1)
 	migrate_leds "re450:=tp-link:"
 	;;
+tplink,tl-wdr4300-v1)
+	migrate_leds ":blue:=:green:"
+	;;
 wd,mynet-n750)
 	migrate_leds "wd:=mynet-n750:"
 	;;
