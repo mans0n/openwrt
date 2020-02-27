@@ -7,7 +7,7 @@
 
 / {
 	model = "T&Ie TI04-708H";
-	compatible = "tnie,ti04-708h";
+	compatible = "tnie,ti04-708h", "qcom,ipq4018";
 
 	memory {
 		device_type = "memory";
@@ -18,10 +18,6 @@
 		led-boot = &led_wan;
 		led-failsafe = &led_wan;
 		led-upgrade = &led_wan;
-	};
-
-	chosen {
-		// bootargs-append = " ubi.mtd=UBI_DEV";
 	};
 
 	keys {
@@ -137,10 +133,14 @@
 	pinctrl-names = "default";
 	status = "okay";
 	cs-gpios = <&tlmm 54 GPIO_ACTIVE_HIGH>,
-		   <&tlmm 59 GPIO_ACTIVE_HIGH>;
+	           <&tlmm 59 GPIO_ACTIVE_HIGH>;
 
 	flash@0 {
-		// compatible = "jedec,spi-nor", "n25q128a11";
+		/*
+		 * U-boot looks for "n25q128a11" node,
+		 * if we don't have it, it will spit out the following warning:
+		 * "ipq: fdt fixup unable to find compatible node".
+		 */
 		compatible = "jedec,spi-nor";
 		reg = <0>;
 		spi-max-frequency = <40000000>;
@@ -149,12 +149,6 @@
 			compatible = "fixed-partitions";
 			#address-cells = <1>;
 			#size-cells = <1>;
-
-			nor-flash@0 {
-				label = "nor";
-				reg = <0x0 0x200000>;
-				read-only;
-			};
 
 			partition@0 {
 				label = "SBL1";
@@ -184,7 +178,6 @@
 			partition@e0000 {
 				label = "APPSBLENV"; /* u-boot-env */
 				reg = <0xe0000 0x10000>;
-				read-only;
 			};
 			partition@f0000 {
 				label = "APPSBL"; /* u-boot */
@@ -200,7 +193,12 @@
 		};
 	};
 
-	spi-nand@1 {
+	flash@1 {
+		/*
+		 * U-boot looks for "spinand,mt29f" node,
+		 * if we don't have it, it will spit out the following warning:
+		 * "ipq: fdt fixup unable to find compatible node".
+		 */
 		compatible = "spi-nand";
 		reg = <1>;
 		spi-max-frequency = <40000000>;
@@ -210,26 +208,9 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			nand-flash@0 {
+			partition@0 {
 				label = "ubi";
 				reg = <0x0 0x8000000>;
-				read-only;
-			};
-
-			partition@0 {
-				label = "bank1";
-				reg = <0x0 0x2000000>;
-				read-only;
-			};
-			partition@3000000 {
-				label = "bank2";
-				reg = <0x3000000 0x2000000>;
-				read-only;
-			};
-			partition@6300000 {
-				label = "bank3";
-				reg = <0x6300000 0x800000>;
-				read-only;
 			};
 		};
 	};
@@ -250,6 +231,7 @@
 };
 
 &gmac1 {
+	// qcom,phy_mdio_addr = <0>;
 	// vlan_tag = <2 0x02>;
 };
 
@@ -257,9 +239,8 @@
 	pinctrl-0 = <&mdio_pins>;
 	pinctrl-names = "default";
 	status = "okay";
-	// phy-reset-gpio = <&tlmm 62 GPIO_ACTIVE_LOW>;
 	reset-gpios = <&tlmm 62 GPIO_ACTIVE_LOW>;
-	reset-delay-us = <5000>;
+	reset-delay-us = <2000>;
 };
 
 &qpic_bam {
@@ -298,8 +279,8 @@
 		};
 
 		mux_cs {
-			function = "gpio";
 			pins = "gpio54", "gpio59";
+			function = "gpio";
 			drive-strength = <2>;
 			bias-disable;
 			output-high;
@@ -313,10 +294,10 @@
 
 &wifi0 {
 	status = "okay";
-	qcom,ath10k-calibration-variant = "TI04-708H";
+	qcom,ath10k-calibration-variant = "TNIE-TI04-708H";
 };
 
 &wifi1 {
 	status = "okay";
-	qcom,ath10k-calibration-variant = "TI04-708H";
+	qcom,ath10k-calibration-variant = "TNIE-TI04-708H";
 };

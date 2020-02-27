@@ -97,8 +97,9 @@ ipq40xx_setup_macs()
 		lan_mac=$(macaddr_add "$wan_mac" 1)
 		;;
 	tnie,ti04-708h)
-		wan_mac=$(macaddr_add $(macaddr_unsetbit_ma $(mtd_get_mac_ascii APPSBLENV base_mac)) 1)
-		lan_mac=$(macaddr_add $(macaddr_unsetbit_ma $(mtd_get_mac_ascii APPSBLENV base_mac)) 2)
+		label_mac=$(macaddr_unsetbit_ma $(mtd_get_mac_ascii APPSBLENV base_mac))
+		wan_mac=$(macaddr_add $label_mac 1)
+		lan_mac=$(macaddr_add $label_mac 2)
 		;;
 	esac
 

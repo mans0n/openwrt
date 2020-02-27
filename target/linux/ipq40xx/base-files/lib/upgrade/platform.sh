@@ -49,7 +49,8 @@ platform_do_upgrade() {
 	8dev,jalapeno |\
 	avm,fritzbox-7530 |\
 	avm,fritzrepeater-3000 |\
-	qxwlan,e2600ac-c2)
+	qxwlan,e2600ac-c2 |\
+	tnie,ti04-708h)
 		nand_do_upgrade "$1"
 		;;
 	alfa-network,ap120c-ac)
@@ -84,10 +85,6 @@ platform_do_upgrade() {
 	openmesh,a62)
 		PART_NAME="inactive"
 		platform_do_upgrade_openmesh "$1"
-		;;
-	tnie,ti04-708h)
-		exit 1
-		nand_do_upgrade "$1"
 		;;
 	zyxel,nbg6617)
 		zyxel_do_upgrade "$1"

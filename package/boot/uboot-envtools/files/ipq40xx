@@ -34,7 +34,8 @@ case "$board" in
 alfa-network,ap120c-ac |\
 glinet,gl-b1300 |\
 openmesh,a42 |\
-openmesh,a62)
+openmesh,a62 |\
+tnie,ti04-708h)
 	ubootenv_add_uci_config "/dev/mtd5" "0x0" "0x10000" "0x10000"
 	;;
 linksys,ea6350v3)

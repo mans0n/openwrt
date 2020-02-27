@@ -412,9 +412,7 @@ define Device/tnie_ti04-708h
 	DEVICE_DTS := qcom-ipq4018-ti04-708h
 	BLOCKSIZE := 128k
 	PAGESIZE := 2048
-	IMAGE_SIZE := 65536k
-	FILESYSTEMS := squashfs
-	# IMAGE/nand-factory.bin := append-ubi | qsdk-ipq-factory-nand
+	DEVICE_PACKAGES := uboot-envtools
 endef
 TARGET_DEVICES += tnie_ti04-708h
 
