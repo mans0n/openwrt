@@ -3,7 +3,7 @@ define Build/tnie_dw02-412h_header
   dd if=/dev/zero of=$@.new bs=8 count=1 oflag=append conv=notrunc 2>/dev/null
   dd if=$@ of=$@.new skip=8 iflag=skip_bytes oflag=append conv=notrunc 2>/dev/null
   ( \
-    header_crc="$$(dd if=$@.new bs=68 count=1 2>/dev/null | gzip -c | tail -c 8 | hexdump -v -n 4 -e '1/4 "%02x"')"; \
+    header_crc="$$(dd if=$@.new bs=68 count=1 2>/dev/null | gzip -c | tail -c 8 | od -An -N4 -tx4 --endian little | tr -d ' \n')"; \
     echo -ne "$$(echo $$header_crc | sed 's/../\\x&/g')" | dd of=$@.new bs=4 seek=1 conv=notrunc 2>/dev/null; \
   )
   mv $@.new $@
