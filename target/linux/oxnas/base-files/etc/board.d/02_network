@@ -3,6 +3,30 @@
 . /lib/functions/uci-defaults.sh
 . /lib/functions/system.sh
 
+mtd_chardev_get_mac_ascii() {
+	local mtdname="$1"
+	local key="$2"
+	local part
+	local mac_dirty
+	local printk_path="/proc/sys/kernel/printk"
+	local printk_level
+
+	part=$(find_mtd_chardev "$mtdname")
+	if [ -z "$part" ]; then
+		echo "mtd_chardev_get_mac_ascii: partition $mtdname not found!" >&2
+		return
+	fi
+
+	# suppress ECC error log
+	printk_level=$(cut -f1 "$printk_path")
+	echo 3 >"$printk_path"
+	mac_dirty=$(strings "$part" | sed -n 's/^'"$key"'=//p')
+	echo "$printk_level" >"$printk_path"
+
+	# "canonicalize" mac
+	[ -n "$mac_dirty" ] && macaddr_canonicalize "$mac_dirty"
+}
+
 bootloader_cmdline_var() {
 	local param
 	local pval
@@ -42,14 +66,21 @@ oxnas_setup_macs()
 {
 	local board="$1"
 	local lan_mac=""
+	local label_mac=""
 
 	case $board in
+	cloudengines,pogoplug-series-3|\
+	cloudengines,pogoplugpro)
+		lan_mac=$(mtd_chardev_get_mac_ascii u-boot-env ethaddr)
+		label_mac=$lan_mac
+		;;
 	shuttle,kd20)
-		lan_mac="$(legacy_boot_mac_adr)"
+		lan_mac=$(macaddr_canonicalize "$(legacy_boot_mac_adr)")
 		;;
 	esac
 
 	[ -n "$lan_mac" ] && ucidef_set_interface_macaddr "lan" $lan_mac
+	[ -n "$label_mac" ] && ucidef_set_label_macaddr $label_mac
 }
 
 board_config_update
