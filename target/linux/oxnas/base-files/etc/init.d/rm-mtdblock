@@ -1,0 +1,13 @@
+#!/bin/sh /etc/rc.common
+
+START=10
+
+boot() {
+	case $(board_name) in
+	cloudengines,pogoplug-pro|\
+	cloudengines,pogoplug-series-3)
+		rm $(find_mtd_part u-boot)
+		rm $(find_mtd_part u-boot-env)
+		;;
+	esac
+}
