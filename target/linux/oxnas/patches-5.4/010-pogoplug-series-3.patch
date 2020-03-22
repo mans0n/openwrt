@@ -63,18 +63,18 @@
  
 +		partition@40000 {
 +			label = "u-boot";
-+			reg = <0x00040000 0x00380000>;
++			reg = <0x00040000 0x001c0000>;
 +			read-only;
 +		};
 +
-+		partition@3c0000 {
++		partition@a0000 {
 +			label = "u-boot-env";
-+			reg = <0x003c0000 0x00080000>;
++			reg = <0x000a0000 0x00020000>;
 +		};
 +
-+		partition@440000 {
++		partition@200000 {
 +			label = "kernel";
-+			reg = <0x00440000 0x009c0000>;
++			reg = <0x00200000 0x00c00000>;
 +		};
 +
  		partition@e00000 {
