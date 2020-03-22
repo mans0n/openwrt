@@ -13,8 +13,8 @@ touch /etc/config/ubootenv
 board=$(board_name)
 
 case "$board" in
+"cloudengines,pogoplug-pro"|\
 "cloudengines,pogoplug-series-3"|\
-"cloudengines,pogoplugpro"|\
 "mitrastar,stg-212")
 	ubootenv_add_uci_config "/dev/mtd2" "0x0" "0x20000" "0x20000" "1"
 	;;

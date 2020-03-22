@@ -46,17 +46,17 @@ define Device/akitio_mycloud
 endef
 TARGET_DEVICES += akitio_mycloud
 
-define Device/cloudengines_pogoplugpro
+define Device/cloudengines_pogoplug-pro
   DEVICE_VENDOR := Cloud Engines
-  DEVICE_MODEL := PogoPlug Pro (with mPCIe)
+  DEVICE_MODEL := Pogoplug Pro (with mPCIe)
   DEVICE_PACKAGES := kmod-usb2-oxnas kmod-usb-ledtrig-usbport \
 	kmod-ata-oxnas-sata kmod-rt2800-pci wpad-basic
 endef
-TARGET_DEVICES += cloudengines_pogoplugpro
+TARGET_DEVICES += cloudengines_pogoplug-pro
 
 define Device/cloudengines_pogoplug-series-3
   DEVICE_VENDOR := Cloud Engines
-  DEVICE_MODEL := PogoPlug Series V3 (without mPCIe)
+  DEVICE_MODEL := Pogoplug V3 (without mPCIe)
   DEVICE_PACKAGES := kmod-usb2-oxnas kmod-usb-ledtrig-usbport \
 	kmod-ata-oxnas-sata
 endef

@@ -13,7 +13,7 @@
 / {
 	model = "Cloud Engines PogoPlug Pro";
 
-	compatible = "cloudengines,pogoplugpro", "oxsemi,ox820";
+	compatible = "cloudengines,pogoplug-pro", "oxsemi,ox820";
 
 	chosen {
 		bootargs = "earlyprintk console=ttyS0,115200";

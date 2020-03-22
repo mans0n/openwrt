@@ -69,8 +69,8 @@ oxnas_setup_macs()
 	local label_mac=""
 
 	case $board in
-	cloudengines,pogoplug-series-3|\
-	cloudengines,pogoplugpro)
+	cloudengines,pogoplug-pro|\
+	cloudengines,pogoplug-series-3)
 		lan_mac=$(mtd_chardev_get_mac_ascii u-boot-env ethaddr)
 		label_mac=$lan_mac
 		;;
