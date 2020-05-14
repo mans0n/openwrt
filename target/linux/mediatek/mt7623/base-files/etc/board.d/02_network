@@ -13,18 +13,26 @@ mediatek_setup_interfaces()
 	unielec,u7623-02-emmc-512m)
 		ucidef_set_interfaces_lan_wan "lan0 lan1 lan2 lan3" "wan"
 		;;
+	iptime,a9004m)
+		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" "wan"
+		;;
 	esac
 }
 
 mediatek_setup_macs()
 {
 	local board="$1"
+	local lan_mac=""
+	local wan_mac=""
 
 	case $board in
 	unielec,u7623-02-emmc-512m)
-		ucidef_set_interface_macaddr "wan" "$(cat /sys/class/net/wan/address)"
+		wan_mac=$(cat /sys/class/net/wan/address)
 		;;
 	esac
+
+	[ -n "$lan_mac" ] && ucidef_set_interface_macaddr "lan" $lan_mac
+	[ -n "$wan_mac" ] && ucidef_set_interface_macaddr "wan" $wan_mac
 }
 
 board_config_update

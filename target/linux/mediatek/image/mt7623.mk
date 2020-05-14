@@ -1,5 +1,24 @@
 KERNEL_LOADADDR := 0x80008000
 
+define Device/bpi_bananapi-r2
+  DEVICE_VENDOR := Bpi
+  DEVICE_MODEL := Banana Pi R2
+  DEVICE_DTS := mt7623n-bananapi-bpi-r2
+  SUPPORTED_DEVICES := bananapi,bpi-r2
+endef
+TARGET_DEVICES += bpi_bananapi-r2
+
+define Device/iptime_a9004m
+  DEVICE_VENDOR := ipTIME
+  DEVICE_MODEL := A9004M
+  DEVICE_DTS := mt7623a-iptime-a9004m
+  DEVICE_PACKAGES := kmod-mt7615e kmod-usb-ledtrig-usbport kmod-hwmon-gpiofan \
+	wpad-basic
+  UIMAGE_NAME := a9004m
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += iptime_a9004m
+
 define Device/unielec_u7623-02-emmc-512m
   DEVICE_VENDOR := UniElec
   DEVICE_MODEL := U7623-02
@@ -10,11 +29,3 @@ define Device/unielec_u7623-02-emmc-512m
   IMAGE/sysupgrade-emmc.bin.gz := sysupgrade-emmc | gzip | append-metadata
 endef
 TARGET_DEVICES += unielec_u7623-02-emmc-512m
-
-define Device/bpi_bananapi-r2
-  DEVICE_VENDOR := Bpi
-  DEVICE_MODEL := Banana Pi R2
-  DEVICE_DTS := mt7623n-bananapi-bpi-r2
-  SUPPORTED_DEVICES := bananapi,bpi-r2
-endef
-TARGET_DEVICES += bpi_bananapi-r2

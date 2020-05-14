@@ -1,0 +1,409 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/dts-v1/;
+
+#include <dt-bindings/input/input.h>
+#include "mt7623.dtsi"
+#include "mt6323.dtsi"
+
+/ {
+	model = "ipTIME A9004M";
+	compatible = "iptime,a9004m", "mediatek,mt7623";
+
+	aliases {
+		serial2 = &uart2;
+		led-boot = &led_cpu;
+		led-failsafe = &led_cpu;
+		led-running = &led_cpu;
+		led-upgrade = &led_cpu;
+	};
+
+	chosen {
+		stdout-path = "serial2:115200n8";
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0 0x80000000 0 0x40000000>;
+	};
+
+	cpus {
+		cpu@0 {
+			proc-supply = <&mt6323_vproc_reg>;
+		};
+
+		cpu@1 {
+			proc-supply = <&mt6323_vproc_reg>;
+		};
+
+		cpu@2 {
+			proc-supply = <&mt6323_vproc_reg>;
+		};
+
+		cpu@3 {
+			proc-supply = <&mt6323_vproc_reg>;
+		};
+	};
+
+	keys {
+		compatible = "gpio-keys-polled";
+		poll-interval = <20>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&key_pins_b>;
+
+		rfkill {
+			label = "rfkill";
+			linux,input-type = <EV_SW>;
+			linux,code = <KEY_RFKILL>;
+			gpios = <&pio 20 GPIO_ACTIVE_HIGH>;
+		};
+
+		ledswitch {
+			label = "ledswitch";
+			linux,input-type = <EV_SW>;
+			linux,code = <KEY_LIGHTS_TOGGLE>;
+			gpios = <&pio 55 GPIO_ACTIVE_HIGH>;
+		};
+
+		wps {
+			label = "wps";
+			linux,code = <KEY_WPS_BUTTON>;
+			gpios = <&pio 256 GPIO_ACTIVE_LOW>;
+		};
+
+		reset {
+			label = "reset";
+			linux,code = <KEY_RESTART>;
+			gpios = <&pio 257 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&led_pins_b>;
+
+		wlan2g {
+			label = "a9004m:amber:wlan2g";
+			linux,default-trigger = "phy0radio";
+			gpios = <&pio 53 GPIO_ACTIVE_HIGH>;
+		};
+
+		wlan5g-2 {
+			label = "a9004m:amber:wlan5g-2";
+			linux,default-trigger = "phy2radio";
+			gpios = <&pio 54 GPIO_ACTIVE_HIGH>;
+		};
+
+		led_cpu: cpu {
+			label = "a9004m:amber:cpu";
+			gpios = <&pio 56 GPIO_ACTIVE_HIGH>;
+		};
+
+		usb3 {
+			label = "a9004m:amber:usb3";
+			trigger-sources = <&u3phy1_port1>;
+			linux,default-trigger = "usbport";
+			gpios = <&pio 74 GPIO_ACTIVE_HIGH>;
+		};
+
+		wlan5g-1 {
+			label = "a9004m:amber:wlan5g-1";
+			linux,default-trigger = "phy1radio";
+			gpios = <&pio 126 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	fan0: gpio-fan {
+		compatible = "gpio-fan";
+		pinctrl-names = "default";
+		pinctrl-0 = <&fan_pins_a>;
+		gpios = <&pio 18 GPIO_ACTIVE_HIGH>,
+		        <&pio 19 GPIO_ACTIVE_HIGH>;
+		/* We don't know the exact rpm, just use dummy values here. */
+		gpio-fan,speed-map = <0 0>, <1 1>, <2 2>;
+		#cooling-cells = <2>;
+	};
+
+	reg_3p3v: regulator-3p3v {
+		compatible = "regulator-fixed";
+		regulator-name = "fixed-3.3V";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	reg_5v: regulator-5v {
+		compatible = "regulator-fixed";
+		regulator-name = "fixed-5V";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+};
+
+&crypto {
+	status = "okay";
+};
+
+&eth {
+	status = "okay";
+
+	gmac0: mac@0 {
+		compatible = "mediatek,eth-mac";
+		reg = <0>;
+		phy-mode = "trgmii";
+		mtd-mac-address = <&usrdata 0xfc20>;
+
+		fixed-link {
+			speed = <1000>;
+			full-duplex;
+			pause;
+		};
+	};
+
+	mdio-bus {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		mt7530: switch@0 {
+			compatible = "mediatek,mt7530";
+		};
+	};
+};
+
+&mt7530 {
+	compatible = "mediatek,mt7530";
+	reg = <0>;
+	mediatek,mcm;
+	resets = <&ethsys MT2701_ETHSYS_MCM_RST>;
+	reset-names = "mcm";
+	core-supply = <&mt6323_vpa_reg>;
+	io-supply = <&mt6323_vemc3v3_reg>;
+
+	ports {
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		port@0 {
+			reg = <0>;
+			label = "lan1";
+		};
+
+		port@1 {
+			reg = <1>;
+			label = "lan2";
+		};
+
+		port@2 {
+			reg = <2>;
+			label = "lan3";
+		};
+
+		port@3 {
+			reg = <3>;
+			label = "lan4";
+		};
+
+		port@4 {
+			reg = <4>;
+			label = "wan";
+			mtd-mac-address = <&usrdata 0xfc40>;
+		};
+
+		port@6 {
+			reg = <6>;
+			label = "cpu";
+			ethernet = <&gmac0>;
+			phy-mode = "trgmii";
+
+			fixed-link {
+				speed = <1000>;
+				full-duplex;
+			};
+		};
+	};
+};
+
+&i2c1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c1_pins_b>;
+	status = "okay";
+};
+
+&bch {
+	status = "okay";
+};
+
+&nandc {
+	pinctrl-names = "default";
+	pinctrl-0 = <&nand_pins_default>;
+	status = "okay";
+
+	nand@0 {
+		reg = <0>;
+		nand-ecc-mode = "hw";
+		nand-ecc-strength = <12>;
+		nand-ecc-step-size = <1024>;
+		mtk,fdm-ecc-size = <8>;
+		mtk,no-bad-mark-swap;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "preloader";
+				reg = <0x0 0x40000>;
+				read-only;
+			};
+
+			partition@40000 {
+				label = "uboot";
+				reg = <0x40000 0x80000>;
+				read-only;
+			};
+
+			partition@c0000 {
+				label = "config";
+				reg = <0xc0000 0x40000>;
+				read-only;
+			};
+
+			factory: partition@100000 {
+				label = "factory";
+				reg = <0x100000 0x40000>;
+				read-only;
+			};
+
+			partition@140000 {
+				label = "kernel";
+				reg = <0x140000 0x800000>;
+			};
+
+			partition@940000 {
+				label = "ubi";
+				reg = <0x940000 0x4800000>;
+			};
+
+			usrdata: partition@5140000 {
+				label = "usrdata";
+				reg = <0x5140000 0x2700000>;
+				read-only;
+			};
+
+			partition@7840000 {
+				label = "bmtpool";
+				reg = <0x7840000 0x7c0000>;
+				read-only;
+			};
+		};
+	};
+};
+
+&pio {
+	key_pins_b: keys-alt {
+		pins-keys {
+			pinmux = <MT7623_PIN_20_PCM_RX_FUNC_GPIO20>,
+			         <MT7623_PIN_55_SPI0_MI_FUNC_GPIO55>,
+			         <MT7623_PIN_256_GPIO256_FUNC_GPIO256>,
+			         <MT7623_PIN_257_GPIO257_FUNC_GPIO257>;
+			input-enable;
+		};
+	};
+
+	led_pins_b: leds-alt {
+		pins-leds {
+			pinmux = <MT7623_PIN_53_SPI0_CSN_FUNC_GPIO53>,
+			         <MT7623_PIN_54_SPI0_CK_FUNC_GPIO54>,
+			         <MT7623_PIN_56_SPI0_MO_FUNC_GPIO56>,
+			         <MT7623_PIN_74_I2S0_BCK_FUNC_GPIO74>,
+			         <MT7623_PIN_126_I2S0_MCLK_FUNC_GPIO126>;
+		};
+	};
+
+	fan_pins_a: fan-alt {
+		pins-fan {
+			pinmux = <MT7623_PIN_18_PCM_CLK_FUNC_GPIO18>,
+			         <MT7623_PIN_19_PCM_SYNC_FUNC_GPIO19>;
+		};
+	};
+};
+
+&uart2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart2_pins_b>;
+	status = "okay";
+};
+
+&usb1 {
+	status = "okay";
+
+	#address-cells = <1>;
+	#size-cells = <0>;
+	vusb33-supply = <&reg_3p3v>;
+	vbus-supply = <&reg_5v>;
+
+	u3phy1_port1: port@1 {
+		reg = <1>;
+		#trigger-source-cells = <0>;
+	};
+};
+
+&u3phy1 {
+	status = "okay";
+};
+
+&u3phy2 {
+	status = "okay";
+	mediatek,phy-switch = <&hifsys>;
+};
+
+&pcie {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pcie_default>;
+	status = "okay";
+
+	pcie@0,0 {
+		status = "okay";
+
+		wifi@0,0 {
+			compatible = "mediatek,mt76";
+			reg = <0x0000 0 0 0 0>;
+			mediatek,mtd-eeprom = <&factory 0x0>;
+			ieee80211-freq-limit = <2400000 2500000>;
+		};
+	};
+
+	pcie@1,0 {
+		status = "okay";
+
+		wifi@0,0 {
+			compatible = "mediatek,mt76";
+			reg = <0x0000 0 0 0 0>;
+			mediatek,mtd-eeprom = <&factory 0x4000>;
+			ieee80211-freq-limit = <5000000 6000000>;
+		};
+	};
+
+	pcie@2,0 {
+		status = "okay";
+
+		wifi@0,0 {
+			compatible = "mediatek,mt76";
+			reg = <0x0000 0 0 0 0>;
+			mediatek,mtd-eeprom = <&factory 0x8000>;
+			ieee80211-freq-limit = <5000000 6000000>;
+		};
+	};
+};
+
+&pcie0_phy {
+	status = "okay";
+};
+
+&pcie1_phy {
+	status = "okay";
+};
