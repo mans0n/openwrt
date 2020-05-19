@@ -339,6 +339,18 @@ define Device/dlink_dap-2610
 endef
 TARGET_DEVICES += dlink_dap-2610
 
+define Device/edgecore_ecw5211-l
+	$(call Device/FitImage)
+	$(call Device/UbiFit)
+	DEVICE_VENDOR := Edgecore
+	DEVICE_MODEL := ECW5211-L
+	SOC := qcom-ipq4018
+	BLOCKSIZE := 128k
+	PAGESIZE := 2048
+	DEVICE_PACKAGES := kmod-usb-acm kmod-tpm-i2c-atmel uboot-envtools
+endef
+TARGET_DEVICES += edgecore_ecw5211-l
+
 define Device/engenius_eap1300
 	$(call Device/FitImage)
 	DEVICE_VENDOR := EnGenius

@@ -15,6 +15,7 @@ ipq40xx_setup_interfaces()
 	8dev,habanero-dvk|\
 	8dev,jalapeno|\
 	alfa-network,ap120c-ac|\
+	edgecore,ecw5211-l|\
 	engenius,ens620ext)
 		ucidef_set_interfaces_lan_wan "eth0" "eth1"
 		;;
