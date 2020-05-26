@@ -51,6 +51,14 @@ endef
 # Images
 #################################################
 
+define Build/trx
+	$(STAGING_DIR_HOST)/bin/trx \
+		-m 33554432 \
+		-o $@.new \
+		-f $@
+	mv $@.new $@
+endef
+
 define Build/trx-with-loader
 	$(STAGING_DIR_HOST)/bin/trx \
 		-m 33554432 \
@@ -81,6 +89,16 @@ define Build/trx-without-loader
 	mv $@.new $@
 endef
 
+define Build/trx-without-jffs2
+	$(STAGING_DIR_HOST)/bin/trx \
+		-m 33554432 \
+		-o $@.new \
+		-f $(KDIR)/loader.gz \
+		-f $(IMAGE_KERNEL) \
+		-a 1024 -f $@
+	mv $@.new $@
+endef
+
 define Build/asus-trx
 	$(STAGING_DIR_HOST)/bin/asustrx -p $(PRODUCTID) -i $@ -o $@.new
 	mv $@.new $@
@@ -98,6 +116,28 @@ define Build/huawei-bin
 	mv $@.new $@
 endef
 
+define Build/iptime-brcm
+	dd if=/dev/zero of=$@.tail bs=56 count=1
+	echo -n $(1) | dd of=$@.tail bs=8 seek=0 count=1 conv=notrunc
+	echo -n "00.00.0" | dd of=$@.tail bs=8 seek=1 count=1 conv=notrunc
+	echo -n "RTMG" | dd of=$@.tail bs=4 seek=4 count=1 conv=notrunc
+	( \
+		cks_words="$$({ \
+			dd if=$@.tail bs=16 count=1 2>/dev/null; \
+			dd if=$@ bs=4 skip=2 count=1 2>/dev/null; \
+		} | od -An -N20 -tx4 --endian big)"; \
+		cks=0; \
+		for word in $$cks_words; do \
+			cks=$$(printf %08x $$((0x$$cks ^ 0x$$word))); \
+		done; \
+		echo -ne "$$(echo $$cks | sed 's/../\\x&/g')" | \
+			dd of=$@.tail bs=4 seek=11 count=1 conv=notrunc; \
+	)
+	gzip -c $@ | tail -c4 | dd of=$@.tail bs=4 seek=12 count=1 conv=notrunc
+	cat $@.tail >> $@
+	rm -f $@.tail
+endef
+
 define Build/linksys-bin
 	$(STAGING_DIR_HOST)/bin/addpattern -4 -p $(DEVICE_ID) -v v$(VERSION) $(if $(SERIAL),-s $(SERIAL)) -i $@ -o $@.new
 	mv $@.new $@
@@ -109,6 +149,12 @@ endef
 
 define Build/motorola-bin
 	$(STAGING_DIR_HOST)/bin/motorola-bin -$(MOTOROLA_DEVICE) $@ $@.new
+	mv $@.new $@
+endef
+
+define Build/pad-extra-header
+	dd if=/dev/zero bs=$(1) count=1 > $@.new
+	cat $@ >> $@.new
 	mv $@.new $@
 endef
 
@@ -709,6 +755,17 @@ define Device/asus-rt-n66w
   PRODUCTID := RT-N66U
 endef
 TARGET_DEVICES += asus-rt-n66w
+
+define Device/iptime-n704bcm
+  DEVICE_VENDOR := ipTIME
+  DEVICE_MODEL := N704BCM
+  IMAGE_SIZE := 3904k
+  KERNEL_INITRAMFS := kernel-bin | trx | iptime-brcm n704bcm | \
+	pad-extra-header 128k
+  IMAGE/trx := append-rootfs | trx-without-jffs2 | iptime-brcm n704bcm | \
+	pad-rootfs | append-metadata | check-size
+endef
+TARGET_DEVICES += iptime-n704bcm
 
 define Device/linksys-wrt160n-v3
   DEVICE_MODEL := WRT160N

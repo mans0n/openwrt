@@ -21,6 +21,14 @@
  	{{BCM47XX_BOARD_NETGEAR_WNDR3300, "Netgear WNDR3300"}, "U12H093T00_NETGEAR"},
  	{{BCM47XX_BOARD_NETGEAR_WNDR3400V1, "Netgear WNDR3400 V1"}, "U12H155T00_NETGEAR"},
  	{{BCM47XX_BOARD_NETGEAR_WNDR3400V2, "Netgear WNDR3400 V2"}, "U12H187T00_NETGEAR"},
+@@ -187,6 +191,7 @@ struct bcm47xx_board_type_list1 bcm47xx_
+ static const
+ struct bcm47xx_board_type_list3 bcm47xx_board_list_board[] __initconst = {
+ 	{{BCM47XX_BOARD_HUAWEI_E970, "Huawei E970"}, "0x048e", "0x5347", "0x11"},
++	{{BCM47XX_BOARD_IPTIME_N704BCM, "ipTIME N704BCM"}, "0x058e", "360", "0x1153"},
+ 	{{BCM47XX_BOARD_PHICOMM_M1, "Phicomm M1"}, "0x0590", "80", "0x1104"},
+ 	{{BCM47XX_BOARD_ZTE_H218N, "ZTE H218N"}, "0x053d", "1234", "0x1305"},
+ 	{{BCM47XX_BOARD_NETGEAR_WNR3500L, "Netgear WNR3500L"}, "0x04CF", "3500", "02"},
 --- a/arch/mips/bcm47xx/buttons.c
 +++ b/arch/mips/bcm47xx/buttons.c
 @@ -27,6 +27,12 @@
@@ -36,7 +44,21 @@
  bcm47xx_buttons_asus_rtn12[] __initconst = {
  	BCM47XX_GPIO_KEY(0, KEY_WPS_BUTTON),
  	BCM47XX_GPIO_KEY(1, KEY_RESTART),
-@@ -277,6 +283,18 @@ bcm47xx_buttons_linksys_wrt310nv1[] __in
+@@ -196,6 +202,13 @@ bcm47xx_buttons_dlink_dir330[] __initcon
+ 	BCM47XX_GPIO_KEY(7, KEY_UNKNOWN),
+ };
+ 
++/* ipTIME */
++
++static const struct gpio_keys_button
++bcm47xx_buttons_iptime_n704bcm[] __initconst = {
++	BCM47XX_GPIO_KEY(21, KEY_RESTART),
++};
++
+ /* Linksys */
+ 
+ static const struct gpio_keys_button
+@@ -277,6 +290,18 @@ bcm47xx_buttons_linksys_wrt310nv1[] __in
  };
  
  static const struct gpio_keys_button
@@ -55,7 +77,7 @@
  bcm47xx_buttons_linksys_wrt54g3gv2[] __initconst = {
  	BCM47XX_GPIO_KEY(5, KEY_WIMAX),
  	BCM47XX_GPIO_KEY(6, KEY_RESTART),
-@@ -385,6 +403,17 @@ bcm47xx_buttons_motorola_wr850gv2v3[] __
+@@ -385,6 +410,17 @@ bcm47xx_buttons_motorola_wr850gv2v3[] __
  /* Netgear */
  
  static const struct gpio_keys_button
@@ -73,7 +95,7 @@
  bcm47xx_buttons_netgear_wndr3400v1[] __initconst = {
  	BCM47XX_GPIO_KEY(4, KEY_RESTART),
  	BCM47XX_GPIO_KEY(6, KEY_WPS_BUTTON),
-@@ -471,6 +500,9 @@ int __init bcm47xx_buttons_register(void
+@@ -471,6 +507,9 @@ int __init bcm47xx_buttons_register(void
  	int err;
  
  	switch (board) {
@@ -83,7 +105,18 @@
  	case BCM47XX_BOARD_ASUS_RTN12:
  		err = bcm47xx_copy_bdata(bcm47xx_buttons_asus_rtn12);
  		break;
-@@ -601,6 +633,12 @@ int __init bcm47xx_buttons_register(void
+@@ -562,6 +601,10 @@ int __init bcm47xx_buttons_register(void
+ 		err = bcm47xx_copy_bdata(bcm47xx_buttons_huawei_e970);
+ 		break;
+ 
++	case BCM47XX_BOARD_IPTIME_N704BCM:
++		err = bcm47xx_copy_bdata(bcm47xx_buttons_iptime_n704bcm);
++		break;
++
+ 	case BCM47XX_BOARD_LINKSYS_E1000V1:
+ 		err = bcm47xx_copy_bdata(bcm47xx_buttons_linksys_e1000v1);
+ 		break;
+@@ -601,6 +644,12 @@ int __init bcm47xx_buttons_register(void
  	case BCM47XX_BOARD_LINKSYS_WRT310NV1:
  		err = bcm47xx_copy_bdata(bcm47xx_buttons_linksys_wrt310nv1);
  		break;
@@ -96,7 +129,7 @@
  	case BCM47XX_BOARD_LINKSYS_WRT54G3GV2:
  		err = bcm47xx_copy_bdata(bcm47xx_buttons_linksys_wrt54g3gv2);
  		break;
-@@ -664,6 +702,12 @@ int __init bcm47xx_buttons_register(void
+@@ -664,6 +713,12 @@ int __init bcm47xx_buttons_register(void
  		err = bcm47xx_copy_bdata(bcm47xx_buttons_motorola_wr850gv2v3);
  		break;
  
@@ -111,7 +144,16 @@
  		break;
 --- a/arch/mips/include/asm/mach-bcm47xx/bcm47xx_board.h
 +++ b/arch/mips/include/asm/mach-bcm47xx/bcm47xx_board.h
-@@ -72,6 +72,7 @@ enum bcm47xx_board {
+@@ -55,6 +55,8 @@ enum bcm47xx_board {
+ 
+ 	BCM47XX_BOARD_HUAWEI_E970,
+ 
++	BCM47XX_BOARD_IPTIME_N704BCM,
++
+ 	BCM47XX_BOARD_LINKSYS_E900V1,
+ 	BCM47XX_BOARD_LINKSYS_E1000V1,
+ 	BCM47XX_BOARD_LINKSYS_E1000V2,
+@@ -72,6 +74,7 @@ enum bcm47xx_board {
  	BCM47XX_BOARD_LINKSYS_WRT300NV11,
  	BCM47XX_BOARD_LINKSYS_WRT310NV1,
  	BCM47XX_BOARD_LINKSYS_WRT310NV2,
@@ -119,7 +161,7 @@
  	BCM47XX_BOARD_LINKSYS_WRT54G3GV2,
  	BCM47XX_BOARD_LINKSYS_WRT54G_TYPE_0101,
  	BCM47XX_BOARD_LINKSYS_WRT54G_TYPE_0467,
-@@ -98,9 +99,12 @@ enum bcm47xx_board {
+@@ -98,9 +101,12 @@ enum bcm47xx_board {
  	BCM47XX_BOARD_MOTOROLA_WR850GP,
  	BCM47XX_BOARD_MOTOROLA_WR850GV2V3,
  
@@ -149,7 +191,22 @@
  bcm47xx_leds_asus_rtn12[] __initconst = {
  	BCM47XX_GPIO_LED(2, "unk", "power", 1, LEDS_GPIO_DEFSTATE_ON),
  	BCM47XX_GPIO_LED(7, "unk", "wlan", 0, LEDS_GPIO_DEFSTATE_OFF),
-@@ -314,6 +322,13 @@ bcm47xx_leds_linksys_wrt310nv1[] __initc
+@@ -219,6 +227,14 @@ bcm47xx_leds_huawei_e970[] __initconst =
+ 	BCM47XX_GPIO_LED(0, "unk", "wlan", 0, LEDS_GPIO_DEFSTATE_OFF),
+ };
+ 
++/* ipTIME */
++
++static const struct gpio_led
++bcm47xx_leds_iptime_n704bcm[] __initconst = {
++	BCM47XX_GPIO_LED(5, "blue", "diag", 0, LEDS_GPIO_DEFSTATE_OFF),
++	BCM47XX_GPIO_LED(6, "blue", "wlan", 0, LEDS_GPIO_DEFSTATE_OFF),
++};
++
+ /* Linksys */
+ 
+ static const struct gpio_led
+@@ -314,6 +330,13 @@ bcm47xx_leds_linksys_wrt310nv1[] __initc
  };
  
  static const struct gpio_led
@@ -163,7 +220,7 @@
  bcm47xx_leds_linksys_wrt54g_generic[] __initconst = {
  	BCM47XX_GPIO_LED(0, "unk", "dmz", 1, LEDS_GPIO_DEFSTATE_OFF),
  	BCM47XX_GPIO_LED(1, "unk", "power", 0, LEDS_GPIO_DEFSTATE_ON),
-@@ -556,6 +571,9 @@ void __init bcm47xx_leds_register(void)
+@@ -556,6 +579,9 @@ void __init bcm47xx_leds_register(void)
  	enum bcm47xx_board board = bcm47xx_board_get();
  
  	switch (board) {
@@ -173,7 +230,18 @@
  	case BCM47XX_BOARD_ASUS_RTN12:
  		bcm47xx_set_pdata(bcm47xx_leds_asus_rtn12);
  		break;
-@@ -689,6 +707,9 @@ void __init bcm47xx_leds_register(void)
+@@ -650,6 +676,10 @@ void __init bcm47xx_leds_register(void)
+ 		bcm47xx_set_pdata(bcm47xx_leds_huawei_e970);
+ 		break;
+ 
++	case BCM47XX_BOARD_IPTIME_N704BCM:
++		bcm47xx_set_pdata(bcm47xx_leds_iptime_n704bcm);
++		break;
++
+ 	case BCM47XX_BOARD_LINKSYS_E1000V1:
+ 		bcm47xx_set_pdata(bcm47xx_leds_linksys_e1000v1);
+ 		break;
+@@ -689,6 +719,9 @@ void __init bcm47xx_leds_register(void)
  	case BCM47XX_BOARD_LINKSYS_WRT310NV1:
  		bcm47xx_set_pdata(bcm47xx_leds_linksys_wrt310nv1);
  		break;
