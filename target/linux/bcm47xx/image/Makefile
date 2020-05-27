@@ -55,6 +55,7 @@ define Build/trx
 	$(STAGING_DIR_HOST)/bin/trx \
 		-m 33554432 \
 		-o $@.new \
+		-f $(KDIR)/loader.gz \
 		-f $@
 	mv $@.new $@
 endef
@@ -766,6 +767,18 @@ define Device/iptime-n704bcm
 	pad-rootfs | append-metadata | check-size
 endef
 TARGET_DEVICES += iptime-n704bcm
+
+define Device/iptime-n904ns
+  DEVICE_VENDOR := ipTIME
+  DEVICE_MODEL := N904ns
+  DEVICE_PACKAGES := $(USB2_PACKAGES)
+  IMAGE_SIZE := 8000k
+  KERNEL_INITRAMFS := kernel-bin | trx | iptime-brcm n904ns | \
+	pad-extra-header 128k
+  IMAGE/trx := append-rootfs | trx-without-jffs2 | iptime-brcm n904ns | \
+	pad-rootfs | append-metadata | check-size
+endef
+TARGET_DEVICES += iptime-n904ns
 
 define Device/linksys-wrt160n-v3
   DEVICE_MODEL := WRT160N

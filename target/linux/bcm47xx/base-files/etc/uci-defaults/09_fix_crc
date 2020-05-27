@@ -7,7 +7,8 @@
 model="$(cat /tmp/sysinfo/model)"
 
 case "$model" in
-"ipTIME N704BCM")
+"ipTIME N704BCM" | \
+"ipTIME N904ns")
 	exit
 	;;
 esac

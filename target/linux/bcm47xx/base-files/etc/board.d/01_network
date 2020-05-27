@@ -177,7 +177,8 @@ configure_by_model() {
 			"0:wan" "1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1" "8@eth0"
 		;;
 
-	"ipTIME N704BCM")
+	"ipTIME N704BCM" | \
+	"ipTIME N904ns")
 		ucidef_add_switch "switch0" \
 			"1:lan:4" "2:lan:3" "3:lan:2" "4:lan:1" "0:wan" "5@eth0"
 		;;
