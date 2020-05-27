@@ -51,15 +51,6 @@ endef
 # Images
 #################################################
 
-define Build/trx
-	$(STAGING_DIR_HOST)/bin/trx \
-		-m 33554432 \
-		-o $@.new \
-		-f $(KDIR)/loader.gz \
-		-f $@
-	mv $@.new $@
-endef
-
 define Build/trx-with-loader
 	$(STAGING_DIR_HOST)/bin/trx \
 		-m 33554432 \
@@ -150,12 +141,6 @@ endef
 
 define Build/motorola-bin
 	$(STAGING_DIR_HOST)/bin/motorola-bin -$(MOTOROLA_DEVICE) $@ $@.new
-	mv $@.new $@
-endef
-
-define Build/pad-extra-header
-	dd if=/dev/zero bs=$(1) count=1 > $@.new
-	cat $@ >> $@.new
 	mv $@.new $@
 endef
 
@@ -760,9 +745,8 @@ TARGET_DEVICES += asus-rt-n66w
 define Device/iptime-n704bcm
   DEVICE_VENDOR := ipTIME
   DEVICE_MODEL := N704BCM
+  SUPPORTED_DEVICES := 0x058e:360
   IMAGE_SIZE := 3904k
-  KERNEL_INITRAMFS := kernel-bin | trx | iptime-brcm n704bcm | \
-	pad-extra-header 128k
   IMAGE/trx := append-rootfs | trx-without-jffs2 | iptime-brcm n704bcm | \
 	pad-rootfs | append-metadata | check-size
 endef
@@ -772,9 +756,8 @@ define Device/iptime-n904ns
   DEVICE_VENDOR := ipTIME
   DEVICE_MODEL := N904ns
   DEVICE_PACKAGES := $(USB2_PACKAGES)
+  SUPPORTED_DEVICES := 0x0550
   IMAGE_SIZE := 8000k
-  KERNEL_INITRAMFS := kernel-bin | trx | iptime-brcm n904ns | \
-	pad-extra-header 128k
   IMAGE/trx := append-rootfs | trx-without-jffs2 | iptime-brcm n904ns | \
 	pad-rootfs | append-metadata | check-size
 endef
