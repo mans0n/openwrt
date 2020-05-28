@@ -1,15 +1,5 @@
 #!/bin/sh
 
-. /lib/functions.sh
-
-board=$(board_name)
-
-case "$board" in
-iptime,a704ns-bcm)
-	exit
-	;;
-esac
-
 kernel_size=$(sed -n 's/mtd[0-9]*: \([0-9a-f]*\).*"\(kernel\|linux\)".*/\1/p' /proc/mtd)
 
 mtd ${kernel_size:+-c 0x$kernel_size} fixtrx firmware && exit 0

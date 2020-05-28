@@ -65,13 +65,6 @@ define Build/trx-serial
 	mv $@.new $@
 endef
 
-define Build/trx-without-mark
-	$(STAGING_DIR_HOST)/bin/otrx create $@.new \
-		-f $(IMAGE_KERNEL) \
-		-a 1024 -f $@
-	mv $@.new $@
-endef
-
 define Build/trx-nand
 	# kernel: always use 4 MiB (-28 B or TRX header) to allow upgrades even
 	#	  if it grows up between releases
@@ -262,12 +255,10 @@ define Device/iptime-a704ns-bcm
   DEVICE_MODEL := A704NS-BCM
   DEVICE_PACKAGES := $(B43) $(USB2_PACKAGES)
   SUPPORTED_DEVICES := iptime,a704ns-bcm
-  BLOCKSIZE :=
   KERNEL_INITRAMFS := kernel-bin | append-dtb | lzma-d16 | trx | \
 	iptime-brcm a704nb | pad-extra-header 256k
   IMAGE_SIZE := 16064k
-  IMAGE/trx := append-rootfs | trx-without-mark | iptime-brcm a704nb | \
-	pad-rootfs | append-metadata | check-size
+  IMAGE/trx := append-rootfs | trx-serial | append-metadata | check-size
 endef
 TARGET_DEVICES += iptime-a704ns-bcm
 
