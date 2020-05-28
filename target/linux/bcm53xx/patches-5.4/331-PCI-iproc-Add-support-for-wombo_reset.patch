@@ -1,0 +1,72 @@
+--- a/drivers/pci/controller/pcie-iproc-bcma.c
++++ b/drivers/pci/controller/pcie-iproc-bcma.c
+@@ -11,6 +11,7 @@
+ #include <linux/phy/phy.h>
+ #include <linux/bcma/bcma.h>
+ #include <linux/ioport.h>
++#include <linux/bcm47xx_nvram.h>
+ 
+ #include "pcie-iproc.h"
+ 
+@@ -64,6 +65,17 @@ static int iproc_pcie_bcma_probe(struct
+ 
+ 	pcie->map_irq = iproc_pcie_bcma_map_irq;
+ 
++	pcie->reset_gpio = bcm47xx_nvram_gpio_pin("wombo_reset");
++	if (pcie->reset_gpio >= 0) {
++		ret = devm_gpio_request_one(pcie->dev, pcie->reset_gpio,
++		                            GPIOF_OUT_INIT_HIGH, "wombo_reset");
++		if (ret) {
++			dev_err(dev, "requesting wombo_reset gpio failed\n");
++			pci_free_resource_list(&resources);
++			return ret;
++		}
++	}
++
+ 	ret = iproc_pcie_setup(pcie, &resources);
+ 	if (ret) {
+ 		dev_err(dev, "PCIe controller setup failed\n");
+--- a/drivers/pci/controller/pcie-iproc.c
++++ b/drivers/pci/controller/pcie-iproc.c
+@@ -20,6 +20,7 @@
+ #include <linux/of_irq.h>
+ #include <linux/of_platform.h>
+ #include <linux/phy/phy.h>
++#include <linux/gpio.h>
+ 
+ #include "pcie-iproc.h"
+ 
+@@ -1487,6 +1488,7 @@ int iproc_pcie_setup(struct iproc_pcie *
+ {
+ 	struct device *dev;
+ 	int ret;
++	int reset_gpio;
+ 	struct pci_bus *child;
+ 	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
+ 
+@@ -1514,6 +1516,15 @@ int iproc_pcie_setup(struct iproc_pcie *
+ 		goto err_exit_phy;
+ 	}
+ 
++	reset_gpio = pcie->reset_gpio;
++	if (reset_gpio >= 0) {
++		gpio_set_value(reset_gpio, 0);
++		mdelay(50);
++
++		gpio_set_value(reset_gpio, 1);
++		mdelay(50);
++	}
++
+ 	iproc_pcie_perst_ctrl(pcie, true);
+ 	iproc_pcie_perst_ctrl(pcie, false);
+ 
+--- a/drivers/pci/controller/pcie-iproc.h
++++ b/drivers/pci/controller/pcie-iproc.h
+@@ -93,6 +93,7 @@ struct iproc_pcie {
+ 	bool rej_unconfig_pf;
+ 	bool has_apb_err_disable;
+ 	bool fix_paxc_cap;
++	int reset_gpio;
+ 
+ 	bool need_ob_cfg;
+ 	struct iproc_pcie_ob ob;

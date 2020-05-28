@@ -1,0 +1,10 @@
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -128,6 +128,7 @@ dtb-$(CONFIG_ARCH_BCM_53573) += \
+ 	bcm47189-luxul-xap-1440.dtb \
+ 	bcm47189-luxul-xap-810.dtb \
+ 	bcm47189-tenda-ac9.dtb \
++	bcm53573-iptime-a704ns-bcm.dtb \
+ 	bcm947189acdbmr.dtb
+ dtb-$(CONFIG_ARCH_BCM_63XX) += \
+ 	bcm963138dvt.dtb

@@ -65,6 +65,13 @@ define Build/trx-serial
 	mv $@.new $@
 endef
 
+define Build/trx-without-mark
+	$(STAGING_DIR_HOST)/bin/otrx create $@.new \
+		-f $(IMAGE_KERNEL) \
+		-a 1024 -f $@
+	mv $@.new $@
+endef
+
 define Build/trx-nand
 	# kernel: always use 4 MiB (-28 B or TRX header) to allow upgrades even
 	#	  if it grows up between releases
@@ -87,6 +94,12 @@ define Build/luxul-lxl
 	$(STAGING_DIR_HOST)/bin/lxlfw create $@.new \
 		-i $@ \
 		-b $(LUXUL_BOARD)
+	mv $@.new $@
+endef
+
+define Build/pad-extra-header
+	dd if=/dev/zero bs=$(1) count=1 > $@.new
+	cat $@ >> $@.new
 	mv $@.new $@
 endef
 
@@ -243,6 +256,20 @@ define Device/dlink-dir-885l
   SIGNATURE := wrgac42_dlink.2015_dir885l
 endef
 TARGET_DEVICES += dlink-dir-885l
+
+define Device/iptime-a704ns-bcm
+  DEVICE_VENDOR := ipTIME
+  DEVICE_MODEL := A704NS-BCM
+  DEVICE_PACKAGES := $(B43) $(USB2_PACKAGES)
+  SUPPORTED_DEVICES := iptime,a704ns-bcm
+  BLOCKSIZE :=
+  KERNEL_INITRAMFS := kernel-bin | append-dtb | lzma-d16 | trx | \
+	iptime-brcm a704nb | pad-extra-header 256k
+  IMAGE_SIZE := 16064k
+  IMAGE/trx := append-rootfs | trx-without-mark | iptime-brcm a704nb | \
+	pad-rootfs | append-metadata | check-size
+endef
+TARGET_DEVICES += iptime-a704ns-bcm
 
 # Linksys devices are disabled due to problem with 2 TRX partitions
 define Device/linksys-ea6300-v1

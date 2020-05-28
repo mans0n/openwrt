@@ -1,0 +1,11 @@
+--- a/drivers/net/ethernet/broadcom/bgmac-bcma.c
++++ b/drivers/net/ethernet/broadcom/bgmac-bcma.c
+@@ -118,6 +118,8 @@ static int bgmac_probe(struct bcma_devic
+ 	const u8 *mac = NULL;
+ 	int err;
+ 
++	return -ENOTSUPP;
++
+ 	bgmac = bgmac_alloc(&core->dev);
+ 	if (!bgmac)
+ 		return -ENOMEM;
