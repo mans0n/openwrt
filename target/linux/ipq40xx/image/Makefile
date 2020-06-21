@@ -312,6 +312,19 @@ define Device/compex_wpj428
 endef
 TARGET_DEVICES += compex_wpj428
 
+define Device/davolink_gapd-7200
+	$(call Device/FitImage)
+	$(call Device/UbiFit)
+	DEVICE_VENDOR := Davolink
+	DEVICE_MODEL := GAPD-7200
+	SOC := qcom-ipq4018
+	BLOCKSIZE := 128k
+	PAGESIZE := 2048
+	DEVICE_PACKAGES := kmod-gpio-pca9570 uboot-envtools
+	# DEVICE_PACKAGES += ipq-wifi-davolink_gapd-7200
+endef
+TARGET_DEVICES += davolink_gapd-7200
+
 define Device/dlink_dap-2610
 	$(call Device/FitImageLzma)
 	DEVICE_VENDOR := D-Link

@@ -1,0 +1,344 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "qcom-ipq4019.dtsi"
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/soc/qcom,tcsr.h>
+
+/ {
+	model = "Davolink GAPD-7200";
+	compatible = "davolink,gapd-7200", "qcom,ipq4018";
+
+	aliases {
+		led-boot = &led_power;
+		led-failsafe = &led_power;
+		led-running = &led_power;
+		led-upgrade = &led_power;
+	};
+
+	soc {
+		rng@22000 {
+			status = "okay";
+		};
+
+		ess-psgmii@98000 {
+			status = "okay";
+		};
+
+		counter@4a1000 {
+			compatible = "qcom,qca-gcnt";
+			reg = <0x4a1000 0x4>;
+		};
+
+		tcsr@1949000 {
+			compatible = "qcom,tcsr";
+			reg = <0x1949000 0x100>;
+			qcom,wifi_glb_cfg = <TCSR_WIFI_GLB_CFG>;
+		};
+
+		tcsr@194b000 {
+			compatible = "qcom,tcsr";
+			reg = <0x194b000 0x100>;
+			qcom,usb-hsphy-mode-select = <TCSR_USB_HSPHY_HOST_MODE>;
+		};
+
+		ess_tcsr@1953000 {
+			compatible = "qcom,tcsr";
+			reg = <0x1953000 0x1000>;
+			qcom,ess-interface-select = <TCSR_ESS_PSGMII>;
+		};
+
+		tcsr@1957000 {
+			compatible = "qcom,tcsr";
+			reg = <0x1957000 0x100>;
+			qcom,wifi_noc_memtype_m0_m2 = <TCSR_WIFI_NOC_MEMTYPE_M0_M2>;
+		};
+
+		usb2@60f8800 {
+			status = "okay";
+
+			dwc3@6000000 {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				port@1 {
+					reg = <1>;
+					#trigger-source-cells = <0>;
+				};
+			};
+		};
+
+		crypto@8e3a000 {
+			status = "okay";
+		};
+
+		watchdog@b017000 {
+			status = "okay";
+		};
+
+		ess-switch@c000000 {
+			status = "okay";
+		};
+
+		edma@c080000 {
+			status = "okay";
+		};
+	};
+
+	keys {
+		compatible = "gpio-keys";
+
+		wps {
+			label = "wps";
+			gpios = <&tlmm 4 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_WPS_BUTTON>;
+		};
+
+		led-switch {
+			label = "led-switch";
+			gpios = <&tlmm 58 GPIO_ACTIVE_HIGH>;
+			linux,code = <KEY_LIGHTS_TOGGLE>;
+			linux,input-type = <EV_SW>;
+		};
+
+		reset {
+			label = "reset";
+			gpios = <&tlmm 63 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		wlan5g {
+			label = "gapd-7200:green:wlan5g";
+			gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "phy1tpt";
+		};
+
+		wlan2g {
+			label = "gapd-7200:green:wlan2g";
+			gpios = <&tlmm 3 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "phy0tpt";
+		};
+
+		led_power: power {
+			label = "gapd-7200:red:power";
+			gpios = <&pca9570 0 GPIO_ACTIVE_HIGH>;
+		};
+
+		wps {
+			label = "gapd-7200:green:wps";
+			gpios = <&pca9570 3 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	i2c {
+		compatible = "i2c-gpio";
+		gpios = <&tlmm 5 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>, /* sda */
+		        <&tlmm 1 (GPIO_ACTIVE_HIGH|GPIO_OPEN_DRAIN)>; /* scl */
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		pca9570: gpio@24 {
+			compatible = "nxp,pca9570";
+			reg = <0x24>;
+			gpio-controller;
+			#gpio-cells = <2>;
+
+			usb {
+				gpio-hog;
+				gpios = <1 GPIO_ACTIVE_LOW>;
+				output-high;
+				line-name = "gapd-7200:power:usb";
+			};
+		};
+	};
+};
+
+&mdio {
+	status = "okay";
+
+	pinctrl-0 = <&mdio_pins>;
+	pinctrl-names = "default";
+};
+
+&usb2_hs_phy {
+	status = "okay";
+};
+
+&tlmm {
+	mdio_pins: mdio_pinmux {
+		mux_mdio {
+			pins = "gpio53";
+			function = "mdio";
+			bias-pull-up;
+		};
+
+		mux_mdc {
+			pins = "gpio52";
+			function = "mdc";
+			bias-pull-up;
+		};
+	};
+
+	spi_0_pins: spi_0_pinmux {
+		mux_spi {
+			pins = "gpio55", "gpio56", "gpio57";
+			function = "blsp_spi0";
+			drive-strength = <12>;
+			bias-disable;
+		};
+
+		mux_cs {
+			pins = "gpio54", "gpio59";
+			function = "gpio";
+			drive-strength = <2>;
+			bias-disable;
+			output-high;
+		};
+	};
+
+	serial_pins: serial_pinmux {
+		mux_uart {
+			pins = "gpio60", "gpio61";
+			function = "blsp_uart0";
+			bias-disable;
+		};
+	};
+};
+
+&blsp_dma {
+	status = "okay";
+};
+
+&blsp1_uart1 {
+	status = "okay";
+
+	pinctrl-0 = <&serial_pins>;
+	pinctrl-names = "default";
+};
+
+&blsp1_spi1 {
+	status = "okay";
+
+	pinctrl-0 = <&spi_0_pins>;
+	pinctrl-names = "default";
+	cs-gpios = <&tlmm 54 GPIO_ACTIVE_HIGH>,
+	           <&tlmm 59 GPIO_ACTIVE_HIGH>;
+
+	flash@0 {
+		/*
+		 * U-boot looks for "n25q128a11" node,
+		 * if we don't have it, it will spit out the following warning:
+		 * "ipq: fdt fixup unable to find compatible node".
+		 */
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <50000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "SBL1";
+				reg = <0x0 0x40000>;
+				read-only;
+			};
+
+			partition@40000 {
+				label = "MIBIB";
+				reg = <0x40000 0x20000>;
+				read-only;
+			};
+
+			partition@60000 {
+				label = "BOOTCONFIG";
+				reg = <0x60000 0x20000>;
+				read-only;
+			};
+
+			partition@80000 {
+				label = "QSEE";
+				reg = <0x80000 0x60000>;
+				read-only;
+			};
+
+			partition@e0000 {
+				label = "CDT";
+				reg = <0xe0000 0x10000>;
+				read-only;
+			};
+
+			partition@f0000 {
+				label = "DDRPARAMS";
+				reg = <0xf0000 0x10000>;
+				read-only;
+			};
+
+			partition@100000 {
+				label = "BOOTCONFIG1";
+				reg = <0x100000 0x20000>;
+				read-only;
+			};
+
+			partition@120000 {
+				label = "APPSBLENV"; /* u-boot-env */
+				reg = <0x120000 0x10000>;
+			};
+
+			partition@130000 {
+				label = "APPSBL"; /* u-boot */
+				reg = <0x130000 0x80000>;
+				read-only;
+			};
+
+			partition@1b0000 {
+				label = "ART";
+				reg = <0x1b0000 0x10000>;
+				read-only;
+			};
+
+			/* 0x1c0000 - 0x400000 unused */
+		};
+	};
+
+	flash@1 {
+		/*
+		 * U-boot looks for "spinand,mt29f" node,
+		 * if we don't have it, it will spit out the following warning:
+		 * "ipq: fdt fixup unable to find compatible node".
+		 */
+		compatible = "spi-nand";
+		reg = <1>;
+		spi-max-frequency = <50000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "ubi";
+				reg = <0x0 0x8000000>;
+			};
+		};
+	};
+};
+
+&cryptobam {
+	status = "okay";
+};
+
+&wifi0 {
+	status = "okay";
+	qcom,ath10k-calibration-variant = "Davolink-GAPD-7200";
+};
+
+&wifi1 {
+	status = "okay";
+	qcom,ath10k-calibration-variant = "Davolink-GAPD-7200";
+};

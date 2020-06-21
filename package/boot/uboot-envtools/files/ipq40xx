@@ -38,6 +38,9 @@ openmesh,a42 |\
 openmesh,a62)
 	ubootenv_add_uci_config "/dev/mtd5" "0x0" "0x10000" "0x10000"
 	;;
+davolink,gapd-7200)
+	ubootenv_add_uci_config "/dev/mtd7" "0x0" "0x10000" "0x10000"
+	;;
 linksys,ea6350v3)
 	ubootenv_add_uci_config "/dev/mtd7" "0x0" "0x20000" "0x20000"
 	;;

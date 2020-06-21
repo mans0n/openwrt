@@ -65,6 +65,7 @@ platform_do_upgrade() {
 	avm,fritzrepeater-1200 |\
 	avm,fritzrepeater-3000 |\
 	cilab,meshpoint-one |\
+	davolink,gapd-7200 |\
 	edgecore,ecw5211-l |\
 	engenius,eap2200 |\
 	mobipromo,cm520-79f |\
