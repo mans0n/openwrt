@@ -1,0 +1,150 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+#include "ar7241.dtsi"
+
+/ {
+	compatible = "hanbit,capl-6000", "qca,ar7241";
+	model = "Hanbit Electronics CAPL-6000";
+
+	aliases {
+		led-boot = &led_power;
+		led-failsafe = &led_power;
+		led-running = &led_power;
+		led-upgrade = &led_power;
+		label-mac-device = &eth0;
+	};
+
+	keys {
+		compatible = "gpio-keys";
+
+		reset {
+			label = "reset";
+			linux,code = <KEY_RESTART>;
+			gpios = <&gpio 11 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+
+		led_power: power {
+			label = "capl-6000:red:power";
+			gpios = <&gpio 12 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	ath9k-leds {
+		compatible = "gpio-leds";
+
+		wlan {
+			label = "capl-6000:green:wlan";
+			gpios = <&ath9k 0 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "phy0tpt";
+		};
+	};
+};
+
+&usb {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "okay";
+
+	port@1 {
+		reg = <1>;
+		#trigger-source-cells = <0>;
+	};
+};
+
+&usb_phy {
+	status = "okay";
+};
+
+&spi {
+	status = "okay";
+	num-cs = <1>;
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <25000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				reg = <0x0 0x40000>;
+				label = "u-boot";
+				read-only;
+			};
+
+			partition@40000 {
+				reg = <0x40000 0x10000>;
+				label = "u-boot-env";
+			};
+
+			partition@50000 {
+				reg = <0x50000 0xfa0000>;
+				label = "firmware";
+
+				compatible = "fixed-partitions";
+				#address-cells = <1>;
+				#size-cells = <1>;
+
+				partition@0 {
+					reg = <0x0 0x400000>;
+					label = "kernel";
+				};
+
+				partition@400000 {
+					reg = <0x400000 0xba0000>;
+					label = "rootfs";
+				};
+			};
+
+			art: partition@ff0000 {
+				reg = <0xff0000 0x10000>;
+				label = "art";
+				read-only;
+			};
+		};
+	};
+};
+
+&pcie {
+	status = "okay";
+
+	ath9k: wifi@0,0 {
+		compatible = "pci168c,002e";
+		reg = <0x0000 0 0 0 0>;
+		qca,no-eeprom;
+		#gpio-cells = <2>;
+		gpio-controller;
+	};
+};
+
+&eth0 {
+	status = "okay";
+
+	mtd-mac-address = <&art 0x110c>;
+	mtd-mac-address-increment = <3>;
+};
+
+&eth1 {
+	status = "okay";
+
+	mtd-mac-address = <&art 0x110c>;
+};
+
+&gpio {
+	status = "okay";
+};
+
+&uart {
+	status = "okay";
+};

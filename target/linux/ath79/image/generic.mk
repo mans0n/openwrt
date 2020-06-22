@@ -717,6 +717,17 @@ define Device/glinet_gl-x750
 endef
 TARGET_DEVICES += glinet_gl-x750
 
+define Device/hanbit_capl-6000
+  SOC := ar7241
+  DEVICE_VENDOR := Hanbit Electronics
+  DEVICE_MODEL := CAPL-6000
+  DEVICE_PACKAGES := kmod-usb2
+  KERNEL_SIZE := 4096k
+  IMAGE_SIZE := 16000k
+  IMAGES :=
+endef
+TARGET_DEVICES += hanbit_capl-6000
+
 define Device/iodata_etg3-r
   SOC := ar9342
   DEVICE_VENDOR := I-O DATA

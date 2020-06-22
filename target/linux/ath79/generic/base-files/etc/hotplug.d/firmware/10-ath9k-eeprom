@@ -64,7 +64,8 @@ case "$FIRMWARE" in
 	buffalo,wzr-hp-g302h-a1a0)
 		caldata_extract "art" 0x1000 0xeb8
 		;;
-	buffalo,wzr-hp-g450h)
+	buffalo,wzr-hp-g450h|\
+	hanbit,capl-6000)
 		caldata_extract "art" 0x1000 0x440
 		;;
 	dlink,dir-825-c1|\
