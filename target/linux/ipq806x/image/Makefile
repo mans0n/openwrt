@@ -266,6 +266,18 @@ define Device/qcom_ipq8064-db149
 endef
 TARGET_DEVICES += qcom_ipq8064-db149
 
+define Device/tnie_dw03-608h
+	$(call Device/FitImage)
+	$(call Device/UbiFit)
+	DEVICE_VENDOR := T&Ie
+	DEVICE_MODEL := DW03-608H
+	SOC := qcom-ipq8065
+	BLOCKSIZE := 128k
+	PAGESIZE := 2048
+	DEVICE_PACKAGES := ath10k-firmware-qca9984-ct
+endef
+TARGET_DEVICES += tnie_dw03-608h
+
 define Device/tplink_c2600
 	$(call Device/TpSafeImage)
 	DEVICE_VENDOR := TP-Link

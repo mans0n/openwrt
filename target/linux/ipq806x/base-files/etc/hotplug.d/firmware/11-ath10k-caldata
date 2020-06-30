@@ -27,6 +27,10 @@ case "$FIRMWARE" in
 		caldata_extract "art" 0x1000 0x2f20
 		ath10k_patch_mac $(macaddr_add $(mtd_get_mac_binary art 0x6) +1)
 		;;
+	tnie,dw03-608h)
+		caldata_extract "ART" 0x1000 0x2f20
+		ath10k_patch_mac $(macaddr_add $(mtd_get_mac_ascii APPSBLENV base_mac) +4)
+		;;
 	tplink,c2600)
 		caldata_extract "radio" 0x1000 0x2f20
 		ath10k_patch_mac $(macaddr_add $(mtd_get_mac_binary default-mac 0x8) -1)
@@ -60,6 +64,10 @@ case "$FIRMWARE" in
 	netgear,r7800)
 		caldata_extract "art" 0x5000 0x2f20
 		ath10k_patch_mac $(macaddr_add $(mtd_get_mac_binary art 0x6) +2)
+		;;
+	tnie,dw03-608h)
+		caldata_extract "ART" 0x5000 0x2f20
+		ath10k_patch_mac $(macaddr_add $(mtd_get_mac_ascii APPSBLENV base_mac) +3)
 		;;
 	tplink,c2600)
 		caldata_extract "radio" 0x5000 0x2f20
