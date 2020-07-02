@@ -605,6 +605,22 @@ static void ag71xx_sgmii_init_qca955x(struct device_node *np)
 	if (!(mr_an_status & QCA955X_MR_AN_STATUS_AN_ABILITY))
 		goto sgmii_out;
 
+#if 0
+	__raw_writel(QCA955X_MR_AN_CONTROL_PHY_RESET |
+			 QCA955X_MR_AN_CONTROL_DUPLEX_MODE |
+			 QCA955X_MR_AN_CONTROL_SPEED_SEL1,
+		     gmac_base + QCA955X_GMAC_REG_MR_AN_CONTROL);
+	__raw_readl(gmac_base + QCA955X_GMAC_REG_MR_AN_CONTROL);
+	udelay(10);
+
+	__raw_writel(2 << QCA955X_SGMII_CONFIG_SPEED_SHIFT |
+			 QCA955X_SGMII_CONFIG_FORCE_SPEED |
+			 2 << QCA955X_SGMII_CONFIG_MODE_CTRL_SHIFT,
+		     gmac_base + QCA955X_GMAC_REG_SGMII_CONFIG);
+	__raw_readl(gmac_base + QCA955X_GMAC_REG_SGMII_CONFIG);
+	udelay(10);
+#endif
+
 	/* SGMII reset sequence */
 	__raw_writel(QCA955X_SGMII_RESET_RX_CLK_N_RESET,
 		     gmac_base + QCA955X_GMAC_REG_SGMII_RESET);
@@ -655,7 +671,7 @@ static void ag71xx_sgmii_init_qca955x(struct device_node *np)
 			pr_err("ag71xx: max retries for SGMII fixup exceeded\n");
 			break;
 		}
-	} while (!(sgmii_status == 0xf || sgmii_status == 0x10));
+	} while (!(sgmii_status == 0x8 || sgmii_status == 0xf || sgmii_status == 0x10));
 
 sgmii_out:
 	iounmap(gmac_base);

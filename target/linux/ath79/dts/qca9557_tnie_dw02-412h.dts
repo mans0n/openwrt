@@ -1,0 +1,220 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+#include "qca955x.dtsi"
+
+/ {
+	compatible = "tnie,dw02-412h", "qca,qca9557";
+	model = "T&Ie DW02-412H";
+
+	aliases {
+		led-boot = &led_wan;
+		led-failsafe = &led_wan;
+		led-upgrade = &led_wan;
+	};
+
+	chosen {
+		bootargs = "console=ttyS0,115200n8";
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		wlan {
+			label = "dw02-412h:green:wlan";
+			gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
+		};
+
+		led_wan: wan {
+			label = "dw02-412h:green:wan";
+			gpios = <&gpio 22 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	keys {
+		compatible = "gpio-keys";
+
+		wps {
+			label = "wps";
+			gpios = <&gpio 16 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_WPS_BUTTON>;
+		};
+
+		reset {
+			label = "reset";
+			gpios = <&gpio 17 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+		};
+	};
+};
+
+&spi {
+	status = "okay";
+
+	num-cs = <1>;
+
+	flash@0 {
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <50000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "u-boot";
+				reg = <0x0 0x40000>;
+				read-only;
+			};
+
+			partition@40000 {
+				label = "u-boot-env";
+				reg = <0x40000 0x10000>;
+			};
+
+			partition@50000 {
+				label = "log";
+				reg = <0x50000 0x10000>;
+				read-only;
+			};
+
+			partition@60000 {
+				label = "recovery";
+				reg = <0x60000 0x170000>;
+				read-only;
+			};
+
+			partition@1d0000 {
+				label = "nvram";
+				reg = <0x1d0000 0x20000>;
+				read-only;
+			};
+
+			art: partition@1f0000 {
+				label = "art";
+				reg = <0x1f0000 0x10000>;
+				read-only;
+			};
+		};
+	};
+};
+
+&nand {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		partition@0 {
+			label = "firmware";
+			reg = <0x0 0x8000000>;
+
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "kernel";
+				reg = <0x0 0x400000>;
+			};
+
+			partition@400000 {
+				label = "ubi";
+				reg = <0x400000 0x7c00000>;
+			};
+		};
+	};
+};
+
+&mdio0 {
+	status = "okay";
+
+	switch@0 {
+		reg = <0x0>;
+		qca,ar8327-initvals = <
+			0x0004 0x07600000  /* PAD0_MODE */
+			0x000c 0x00000080  /* PAD6_MODE */
+			0x007c 0x0000007e  /* PORT0_STATUS */
+			0x0094 0x0000007e  /* PORT6_STATUS */
+			0x00e0 0xc74164de  /* SGMII_CTRL */
+		>;
+	};
+};
+
+&eth0 {
+	status = "okay";
+
+	pll-data = <0xa6000000 0x00000101 0x00001616>;
+	mtd-mac-address = <&art 0x6>;
+	mtd-mac-address-increment = <1>;
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
+};
+
+&eth1 {
+	status = "okay";
+
+	pll-data = <0x03000101 0x00000101 0x00001616>;
+	qca955x-sgmii-fixup;
+	mtd-mac-address = <&art 0x6>;
+
+	gmac-config {
+		device = <&gmac>;
+		ge0-sgmii = <0>;
+		sgmii-mode = <2>;
+		sgmii-force-speed = <1>;
+		sgmii-speed = <2>;
+	};
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
+};
+
+&pcie0 {
+	status = "okay";
+
+	wifi@0,0 {
+		compatible = "qcom,ath10k";
+		reg = <0x0000 0 0 0 0>;
+	};
+};
+
+&uart {
+	status = "okay";
+};
+
+&usb_phy0 {
+	status = "okay";
+};
+
+&usb0 {
+	status = "okay";
+
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	port@1 {
+		reg = <1>;
+		#trigger-source-cells = <0>;
+	};
+};
+
+&wmac {
+	status = "okay";
+
+	mtd-cal-data = <&art 0x1000>;
+	mtd-mac-address = <&art 0x0>;
+	mtd-mac-address-increment = <3>;
+};

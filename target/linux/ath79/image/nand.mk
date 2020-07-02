@@ -2,6 +2,19 @@ include ./common-netgear.mk	# for netgear-uImage
 
 DEVICE_VARS += RAS_ROOTFS_SIZE RAS_BOARD RAS_VERSION
 
+define Build/tnie_dw02-412h_header
+	dd if=$@ of=$@.new bs=4 count=1 2>/dev/null
+	dd if=/dev/zero of=$@.new bs=8 count=1 oflag=append conv=notrunc 2>/dev/null
+	dd if=$@ of=$@.new skip=8 iflag=skip_bytes oflag=append conv=notrunc 2>/dev/null
+	( \
+		header_crc="$$(dd if=$@.new bs=68 count=1 2>/dev/null | gzip -c | \
+			tail -c 8 | od -An -N4 -tx4 --endian little | tr -d ' \n')"; \
+		echo -ne "$$(echo $$header_crc | sed 's/../\\x&/g')" | \
+			dd of=$@.new bs=4 seek=1 conv=notrunc 2>/dev/null; \
+	)
+	mv $@.new $@
+endef
+
 # attention: only zlib compression is allowed for the boot fs
 define Build/zyxel-buildkerneljffs
 	rm -rf  $(KDIR_TMP)/zyxelnbg6716
@@ -193,6 +206,26 @@ define Device/netgear_wndr4500-v3
   $(Device/netgear_ath79_nand)
 endef
 TARGET_DEVICES += netgear_wndr4500-v3
+
+define Device/tnie_dw02-412h
+  SOC := qca9557
+  DEVICE_VENDOR := T&Ie
+  DEVICE_MODEL := DW02-412H
+  DEVICE_PACKAGES := kmod-ath10k-ct ath10k-firmware-qca988x-ct kmod-usb2
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_SIZE = 4096k
+  IMAGE_SIZE := 128m
+  UIMAGE_NAME := ISQ-4000
+  KERNEL := $$(KERNEL) | tnie_dw02-412h_header
+  KERNEL_INITRAMFS := $$(KERNEL)
+  IMAGES += factory.bin
+  IMAGE/factory.bin := append-kernel | pad-to $$(KERNEL_SIZE) | append-ubi | \
+	check-size
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  UBINIZE_OPTS := -E 5
+endef
+TARGET_DEVICES += tnie_dw02-412h
 
 define Device/zyxel_nbg6716
   SOC := qca9558

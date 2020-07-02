@@ -46,7 +46,8 @@ yuncore,xd4200)
 buffalo,wzr-hp-ag300h)
 	ubootenv_add_uci_config "/dev/mtd3" "0x0" "0x10000" "0x10000"
 	;;
-domywifi,dw33d)
+domywifi,dw33d|\
+tnie,dw02-412h)
 	ubootenv_add_uci_config "/dev/mtd4" "0x0" "0x10000" "0x10000"
 	;;
 glinet,gl-ar150)
