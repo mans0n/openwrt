@@ -5,8 +5,7 @@ define Device/7623a-iptime-a8004ns-m-emmc
   DEVICE_PACKAGES := mkf2fs e2fsprogs kmod-fs-vfat kmod-nls-cp437 kmod-nls-iso8859-1 kmod-mmc \
     kmod-mt7615e kmod-usb-ledtrig-usbport kmod-hwmon-core kmod-hwmon-gpiofan
   SUPPORTED_DEVICES := iptime,a8004ns-m-emmc
-  IMAGES := sysupgrade-emmc.bin.gz
-  IMAGE/sysupgrade-emmc.bin.gz := sysupgrade-emmc | gzip | append-metadata
+  IMAGES :=
 endef
 
 TARGET_DEVICES += 7623a-iptime-a8004ns-m-emmc
