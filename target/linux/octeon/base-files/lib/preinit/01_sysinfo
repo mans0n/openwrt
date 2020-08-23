@@ -5,6 +5,10 @@ do_sysinfo_octeon() {
 	machine=$(grep "^system type" /proc/cpuinfo | sed "s/system type.*: \(.*\)/\1/g")
 
 	case "$machine" in
+	"EBB6000"*)
+		name="neobox,m113"
+		;;
+
 	"UBNT_E100"*)
 		name="erlite"
 		;;

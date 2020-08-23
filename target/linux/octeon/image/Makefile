@@ -47,4 +47,13 @@ define Device/ubnt_edgerouter-lite
 endef
 TARGET_DEVICES += ubnt_edgerouter-lite
 
+M113_CMDLINE:=-console=ttyS0,115200
+define Device/xnsystems_neobox-m113
+  DEVICE_VENDOR := XNsystems
+  DEVICE_MODEL := Neobox M113
+  CMDLINE := $(M113_CMDLINE)
+  IMAGES :=
+endef
+TARGET_DEVICES += xnsystems_neobox-m113
+
 $(eval $(call BuildImage))

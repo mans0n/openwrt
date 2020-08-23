@@ -8,6 +8,9 @@
 board_config_update
 
 case "$(board_name)" in
+neobox,m113)
+	ucidef_set_interface_lan "eth4 eth5 eth6"
+	;;
 *)
 	ucidef_set_interfaces_lan_wan "eth0" "eth1"
 	;;
