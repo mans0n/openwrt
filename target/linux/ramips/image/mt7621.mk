@@ -738,6 +738,16 @@ define Device/iptime_a8004t
 endef
 TARGET_DEVICES += iptime_a8004t
 
+define Device/iptime_a3002me
+  $(Device/dsa-migration)
+  IMAGE_SIZE := 16128k
+  UIMAGE_NAME := a3002me
+  DEVICE_VENDOR := ipTIME
+  DEVICE_MODEL := A3002MESH
+  DEVICE_PACKAGES := kmod-mt7615e kmod-mt7615-firmware kmod-usb3
+endef
+TARGET_DEVICES += iptime_a3002me
+
 define Device/jcg_jhr-ac876m
   $(Device/dsa-migration)
   IMAGE_SIZE := 16064k
