@@ -748,6 +748,23 @@ define Device/iptime_a3002me
 endef
 TARGET_DEVICES += iptime_a3002me
 
+define Device/iptime_ax2004m
+  $(Device/dsa-migration)
+  $(Device/uimage-lzma-loader)
+  BLOCKSIZE := 128k
+  PAGESIZE := 2048
+  KERNEL_SIZE := 4096k
+  IMAGE_SIZE := 16128k
+  DEVICE_VENDOR := ipTIME
+  DEVICE_MODEL := AX2004M
+  DEVICE_PACKAGES := kmod-usb3 kmod-mt7915e
+  UBINIZE_OPTS := -E 5
+  IMAGES += sysupgrade.bin factory.img
+  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | pad-to $$$$(PAGESIZE)
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += iptime_ax2004m
+
 define Device/jcg_jhr-ac876m
   $(Device/dsa-migration)
   IMAGE_SIZE := 16064k
