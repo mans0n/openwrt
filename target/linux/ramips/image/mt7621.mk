@@ -760,8 +760,11 @@ define Device/iptime_ax2004m
   DEVICE_PACKAGES := kmod-usb3 kmod-mt7915e
   UBINIZE_OPTS := -E 5
   IMAGES += sysupgrade.bin factory.img
-  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | pad-to $$$$(PAGESIZE)
+  IMAGE/factory.img := append-kernel | pad-to $$$$(KERNEL_SIZE) | append-ubi | check-size | iptime-fw-header
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  KERNEL := kernel-bin | relocate-kernel 0x80001000 | lzma | loader-kernel | fit none $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb
+  IPTIME_MODEL := ax2004m
+  KERNEL_LOADADDR := 0x82000000
 endef
 TARGET_DEVICES += iptime_ax2004m
 

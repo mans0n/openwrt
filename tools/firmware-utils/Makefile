@@ -99,6 +99,7 @@ define Host/Compile
 	$(call cc,zyimage,-Wall)
 	$(call cc,zytrx,-Wall)
 	$(call cc,zyxbcm,-Wall)
+	$(call cc,add_iptime_fw_header cyg_crc32, -Wall)
 endef
 
 define Host/Install

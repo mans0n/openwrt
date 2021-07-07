@@ -256,6 +256,14 @@ define Build/install-dtb
 	)
 endef
 
+# prepend iptime-specific firmware header to image
+# add_iptime_fw_header <model> <version> <input_file> <output_file>
+define Build/iptime-fw-header
+	-$(STAGING_DIR_HOST)/bin/add_iptime_fw_header \
+		$(IPTIME_MODEL) 00_000 \
+		$@ $@.new && mv $@.new $@ || rm -f $@
+endef
+
 define Build/jffs2
 	rm -rf $(KDIR_TMP)/$(DEVICE_NAME)/jffs2 && \
 		mkdir -p $(KDIR_TMP)/$(DEVICE_NAME)/jffs2/$$(dirname $(1)) && \
