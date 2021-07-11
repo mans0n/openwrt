@@ -232,6 +232,8 @@ static int bcm4908img_calc_crc32(FILE *fp, struct bcm4908img_info *info) {
 	return 0;
 }
 
+static bool bcm4908img_find_jffs2_magic(const void *buf);
+
 /**************************************************
  * Existing firmware parser
  **************************************************/
@@ -293,6 +295,9 @@ static int bcm4908img_parse(FILE *fp, struct bcm4908img_info *info) {
 	chk = (void *)buf;
 	if (be32_to_cpu(chk->magic) == 0x2a23245e)
 		info->cferom_offset = be32_to_cpu(chk->header_len);
+
+	if (bcm4908img_find_jffs2_magic(buf + 0x38))
+		info->cferom_offset = 0x38;
 
 	/* Offsets */
 
@@ -715,6 +720,11 @@ struct jffs2_raw_dirent
 
 #define je16_to_cpu(x) ((x).v16)
 #define je32_to_cpu(x) ((x).v32)
+
+static bool bcm4908img_find_jffs2_magic(const void *buf) {
+	struct jffs2_unknown_node *node = buf;
+	return (je16_to_cpu(node->magic) == JFFS2_MAGIC_BITMASK) ? true : false;
+}
 
 static int bcm4908img_bootfs_ls(FILE *fp, struct bcm4908img_info *info) {
 	struct jffs2_unknown_node node;

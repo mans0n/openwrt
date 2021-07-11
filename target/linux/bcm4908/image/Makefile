@@ -64,6 +64,16 @@ define Device/asus_gt-ac5300
 endef
 TARGET_DEVICES += asus_gt-ac5300
 
+define Device/iptime_a8004bcm
+  DEVICE_VENDOR := ipTIME
+  DEVICE_MODEL := A8004BCM
+  DEVICE_DTS := broadcom/bcm4908/bcm4908-iptime-a8004bcm
+  DEVICE_PACKAGES := kmod-usb-ledtrig-usbport kmod-hwmon-gpiofan
+  IMAGES := bin
+  IMAGE/bin := append-ubi | bcm4908img | iptime-crc32 a8004nb
+endef
+TARGET_DEVICES += iptime_a8004bcm
+
 define Device/netgear_r8000p
   DEVICE_VENDOR := Netgear
   DEVICE_MODEL := R8000P

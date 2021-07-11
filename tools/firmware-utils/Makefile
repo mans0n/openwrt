@@ -40,6 +40,7 @@ define Host/Compile
 	$(call cc,fix-u-media-header cyg_crc32,-Wall)
 	$(call cc,hcsmakeimage bcmalgo,-Wall)
 	$(call cc,imagetag imagetag_cmdline cyg_crc32,-Wall)
+	$(call cc,iptime-crc32 cyg_crc32,-Wall)
 	$(call cc,jcgimage,-lz -Wall)
 	$(call cc,lxlfw,-Wall)
 	$(call cc,lzma2eva,-lz -Wall)

@@ -1,0 +1,179 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/leds/common.h>
+
+#include "bcm4908.dtsi"
+
+/ {
+	compatible = "iptime,a8004bcm", "brcm,bcm4908";
+	model = "ipTIME A8004BCM";
+
+	aliases {
+		led-boot = &led_cpu;
+		led-failsafe = &led_cpu;
+		led-running = &led_cpu;
+		led-upgrade = &led_cpu;
+	};
+
+	memory@0 {
+		device_type = "memory";
+		reg = <0x00 0x00 0x00 0x40000000>;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led_cpu: led-cpu {
+			label = "blue:power";
+			function = LED_FUNCTION_POWER;
+			color = <LED_COLOR_ID_BLUE>;
+			gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+		};
+
+		led-wlan5g {
+			function = "wlan5g";
+			color = <LED_COLOR_ID_BLUE>;
+			gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+		};
+
+		led-wlan2g {
+			function = "wlan2g";
+			color = <LED_COLOR_ID_BLUE>;
+			gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+		};
+
+		led-usb3 {
+			function = "usb3";
+			color = <LED_COLOR_ID_BLUE>;
+			gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	keys {
+		compatible = "gpio-keys-polled";
+		poll-interval = <100>;
+
+		rfkill {
+			label = "rfkill";
+			linux,input-type = <EV_SW>;
+			linux,code = <KEY_RFKILL>;
+			gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+		};
+
+		wps {
+			label = "wps";
+			linux,code = <KEY_WPS_BUTTON>;
+			gpios = <&gpio0 2 GPIO_ACTIVE_LOW>;
+		};
+
+		reset {
+			label = "reset";
+			linux,code = <KEY_RESTART>;
+			gpios = <&gpio0 4 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	fan0: gpio-fan {
+		compatible = "gpio-fan";
+		gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>,
+		        <&gpio0 24 GPIO_ACTIVE_HIGH>;
+		/* We don't know the exact rpm, just use dummy values here. */
+		gpio-fan,speed-map = <0 0>, <1 1>, <2 2>;
+		#cooling-cells = <2>;
+	};
+};
+
+&enet {
+	// nvmem-cells = <&base_mac_addr>;
+	// nvmem-cell-names = "mac-address";
+	mtd-mac-address = <&cferom 0x106a0>;
+};
+
+&usb_phy {
+	brcm,ioc = <1>;
+	status = "okay";
+};
+
+&ehci {
+	status = "okay";
+};
+
+&ohci {
+	status = "okay";
+};
+
+&xhci {
+	status = "okay";
+};
+
+&ports {
+	port@0 {
+		label = "lan1";
+	};
+
+	port@1 {
+		label = "lan2";
+	};
+
+	port@2 {
+		label = "lan3";
+	};
+
+	port@3 {
+		label = "lan4";
+	};
+};
+
+&nandcs {
+	nand-ecc-strength = <4>;
+	nand-ecc-step-size = <512>;
+	nand-on-flash-bbt;
+	brcm,nand-has-wp;
+
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	partitions {
+		compatible = "brcm,bcm4908-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		cferom: partition@0 {
+			label = "cferom";
+			reg = <0x0 0x100000>;
+
+			compatible = "nvmem-cells";
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0 0x0 0x100000>;
+
+			base_mac_addr: mac@106a0 {
+				reg = <0x106a0 0x6>;
+			};
+		};
+
+		partition@100000 {
+			compatible = "brcm,bcm4908-firmware";
+			reg = <0x100000 0x3700000>;
+		};
+
+		partition@3800000 {
+			compatible = "brcm,bcm4908-firmware";
+			reg = <0x3800000 0x3700000>;
+		};
+
+		partition@6f00000 {
+			label = "nvram";
+			reg = <0x6f00000 0x800000>;
+			read-only;
+		};
+
+		partition@7700000 {
+			label = "config";
+			reg = <0x7700000 0x800000>;
+			read-only;
+		};
+	};
+};

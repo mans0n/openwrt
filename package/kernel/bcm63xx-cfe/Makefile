@@ -38,6 +38,7 @@ define Build/InstallDev
 	rm -rf $(KERNEL_BUILD_DIR)/$(PKG_NAME)
 	mkdir -p $(KERNEL_BUILD_DIR)/$(PKG_NAME)
 	$(CP) -r $(PKG_BUILD_DIR)/* $(KERNEL_BUILD_DIR)/$(PKG_NAME)
+	$(CP) -r ./files/* $(KERNEL_BUILD_DIR)/$(PKG_NAME)
 endef
 
 $(eval $(call BuildPackage,bcm63xx-cfe))

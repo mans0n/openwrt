@@ -22,6 +22,7 @@ platform_expected_image() {
 
 	case "$machine" in
 		asus,gt-ac5300)			echo "asus GT-AC5300";;
+		iptime,a8004bcm)		echo "iptime a8004nb";;
 		netgear,r8000p)			echo "chk U12H359T00_NETGEAR";;
 		tplink,archer-c2300-v1)		echo "";;
 	esac
@@ -45,6 +46,14 @@ platform_identify() {
 	case "$magic" in
 		GT-AC5300)
 			echo "asus"
+			return
+		;;
+	esac
+
+	magic=$(get_content "$1" 0 8)
+	case "$magic" in
+		a8004nb)
+			echo "iptime"
 			return
 		;;
 	esac
@@ -90,6 +99,14 @@ platform_check_image() {
 				error=1
 			}
 		;;
+		iptime)
+			local productid=$(get_content "$1" 0 8)
+
+			[ -n "$expected_image" -a "iptime $productid" != "$expected_image" ] && {
+				echo "Firmware productid mismatch ($productid)" >&2
+				error=1
+			}
+		;;
 		*)
 			echo "Invalid image type. Please use firmware specific for this device." >&2
 			notify_firmware_broken
@@ -129,7 +146,7 @@ platform_calc_new_cferam() {
 	umount $dir
 	rm -fr $dir
 
-	idx=$(((idx + inc) % 1000))
+	idx=$(($(busybox expr $idx + $inc) % 1000))
 
 	echo $(printf "cferam.%03d" $idx)
 }
