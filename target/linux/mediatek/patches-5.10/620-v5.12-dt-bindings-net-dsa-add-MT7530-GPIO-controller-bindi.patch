@@ -1,0 +1,31 @@
+From 974d5ba60df74483c69a2ccf580308de68769ec7 Mon Sep 17 00:00:00 2001
+From: DENG Qingfang <dqfext@gmail.com>
+Date: Mon, 25 Jan 2021 12:43:21 +0800
+Subject: [PATCH] dt-bindings: net: dsa: add MT7530 GPIO controller binding
+
+Add device tree binding to support MT7530 GPIO controller.
+
+Signed-off-by: DENG Qingfang <dqfext@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+---
+ Documentation/devicetree/bindings/net/dsa/mt7530.txt | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+--- a/Documentation/devicetree/bindings/net/dsa/mt7530.txt
++++ b/Documentation/devicetree/bindings/net/dsa/mt7530.txt
+@@ -76,6 +76,12 @@ phy-mode must be set, see also example 2
+  * mt7621: phy-mode = "rgmii-txid";
+  * mt7623: phy-mode = "rgmii";
+ 
++Optional properties:
++
++- gpio-controller: Boolean; if defined, MT7530's LED controller will run on
++	GPIO mode.
++- #gpio-cells: Must be 2 if gpio-controller is defined.
++
+ See Documentation/devicetree/bindings/net/dsa/dsa.txt for a list of additional
+ required, optional properties and how the integrated switch subnodes must
+ be specified.

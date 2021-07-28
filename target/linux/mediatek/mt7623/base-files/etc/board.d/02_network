@@ -12,6 +12,9 @@ mediatek_setup_interfaces()
 	unielec,u7623-02-emmc-512m)
 		ucidef_set_interfaces_lan_wan "lan0 lan1 lan2 lan3" "wan"
 		;;
+	mercury,rush-318ac)
+		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 lan4" "wan"
+		;;
 	esac
 }
 

@@ -85,7 +85,9 @@ platform_do_upgrade() {
 	bananapi,bpi-r2)
 		mtk_mmc_full_upgrade "$1"
 		;;
-
+	mercury,rush-318ac)
+		nand_do_upgrade "$1"
+		;;
 	unielec,u7623-02-emmc-512m)
 		local magic="$(get_magic_long "$1")"
 		if [ "$magic" = "53444d4d" ]; then
@@ -152,6 +154,9 @@ platform_check_image() {
 			ask_bool 0 "Abort" && exit 1
 			return 0
 		fi
+		;;
+	mercury,rush-318ac)
+		return 0
 		;;
 	unielec,u7623-02-emmc-512m)
 		# Can always upgrade to the new-style full image

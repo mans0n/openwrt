@@ -1,0 +1,56 @@
+From 63c75c053b4160f7b90a418dcc4e5bcfac2fb6fc Mon Sep 17 00:00:00 2001
+From: DENG Qingfang <dqfext@gmail.com>
+Date: Fri, 26 Feb 2021 14:32:26 +0800
+Subject: [PATCH] net: dsa: mt7530: don't build GPIO support if !GPIOLIB
+
+The new GPIO support may be optional at runtime, but it requires
+building against gpiolib:
+
+ERROR: modpost: "gpiochip_get_data" [drivers/net/dsa/mt7530.ko]
+undefined!
+ERROR: modpost: "devm_gpiochip_add_data_with_key"
+[drivers/net/dsa/mt7530.ko] undefined!
+
+Add #ifdef to exclude GPIO support if GPIOLIB is not enabled.
+
+Fixes: 429a0edeefd8 ("net: dsa: mt7530: MT7530 optional GPIO support")
+Reported-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: DENG Qingfang <dqfext@gmail.com>
+Link: https://lore.kernel.org/r/20210226063226.8474-1-dqfext@gmail.com
+Signed-off-by: Jakub Kicinski <kuba@kernel.org>
+---
+ drivers/net/dsa/mt7530.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/drivers/net/dsa/mt7530.c
++++ b/drivers/net/dsa/mt7530.c
+@@ -1543,6 +1543,7 @@ mtk_get_tag_protocol(struct dsa_switch *
+ 	}
+ }
+ 
++#ifdef CONFIG_GPIOLIB
+ static inline u32
+ mt7530_gpio_to_bit(unsigned int offset)
+ {
+@@ -1645,6 +1646,7 @@ mt7530_setup_gpio(struct mt7530_priv *pr
+ 
+ 	return devm_gpiochip_add_data(dev, gc, priv);
+ }
++#endif /* CONFIG_GPIOLIB */
+ 
+ static int
+ mt7530_setup(struct dsa_switch *ds)
+@@ -1787,11 +1789,13 @@ mt7530_setup(struct dsa_switch *ds)
+ 		}
+ 	}
+ 
++#ifdef CONFIG_GPIOLIB
+ 	if (of_property_read_bool(priv->dev->of_node, "gpio-controller")) {
+ 		ret = mt7530_setup_gpio(priv);
+ 		if (ret)
+ 			return ret;
+ 	}
++#endif /* CONFIG_GPIOLIB */
+ 
+ 	mt7530_setup_port5(ds, interface);
+ 

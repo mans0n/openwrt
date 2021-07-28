@@ -1,0 +1,21 @@
+
+. /lib/functions/leds.sh
+. /lib/functions/uci-defaults.sh
+
+board=$(board_name)
+
+board_config_update
+
+case $board in
+mercury,rush-318ac)
+	ucidef_set_led_netdev "lan1" "lan1" "amber:lan1" "lan1"
+	ucidef_set_led_netdev "lan2" "lan2" "amber:lan2" "lan2"
+	ucidef_set_led_netdev "lan3" "lan3" "amber:lan3" "lan3"
+	ucidef_set_led_netdev "lan4" "lan4" "amber:lan4" "lan4"
+	ucidef_set_led_netdev "wan" "wan" "amber:wan" "wan"
+	;;
+esac
+
+board_config_flush
+
+exit 0

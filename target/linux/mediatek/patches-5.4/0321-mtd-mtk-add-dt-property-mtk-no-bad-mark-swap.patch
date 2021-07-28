@@ -1,0 +1,22 @@
+--- a/drivers/mtd/nand/raw/mtk_nand.c
++++ b/drivers/mtd/nand/raw/mtk_nand.c
+@@ -1180,6 +1180,9 @@ static void mtk_nfc_set_bad_mark_ctl(str
+ {
+ 	struct nand_chip *nand = mtd_to_nand(mtd);
+ 
++	if (bm_ctl->bm_swap)
++		return;
++
+ 	if (mtd->writesize == 512) {
+ 		bm_ctl->bm_swap = mtk_nfc_no_bad_mark_swap;
+ 	} else {
+@@ -1385,6 +1388,9 @@ static int mtk_nfc_nand_chip_init(struct
+ 	if (of_property_read_u32(np, "mtk,fdm-ecc-size", &chip->fdm.ecc_size))
+ 		chip->fdm.ecc_size = 1;
+ 
++	if (of_property_read_bool(np, "mtk,no-bad-mark-swap"))
++		chip->bad_mark.bm_swap = mtk_nfc_no_bad_mark_swap;
++
+ 	nand = &chip->nand;
+ 	nand->controller = &nfc->controller;
+ 

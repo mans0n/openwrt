@@ -1,0 +1,18 @@
+[ "$ACTION" == "add" ] || exit 0
+
+PHYNBR=${DEVPATH##*/phy}
+
+[ -n $PHYNBR ] || exit 0
+
+. /lib/functions.sh
+. /lib/functions/system.sh
+
+board=$(board_name)
+
+case "$board" in
+	mercury,rush-318ac)
+		wan_mac=$(mtd_get_mac_binary config 0x20004)
+		[ "$PHYNBR" = "0" ] && macaddr_add $wan_mac 3 > /sys${DEVPATH}/macaddress
+		[ "$PHYNBR" = "1" ] && macaddr_add $wan_mac 2 > /sys${DEVPATH}/macaddress
+		;;
+esac
