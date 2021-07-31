@@ -1103,6 +1103,16 @@ define Device/wavlink_wl-wn579x3
 endef
 TARGET_DEVICES += wavlink_wl-wn579x3
 
+define Device/wevo_air-duo
+  SOC := mt7620a
+  IMAGE_SIZE := 15040k
+  UIMAGE_NAME := AIR DUO(0.0.0)
+  DEVICE_VENDOR := WeVO
+  DEVICE_MODEL := AIR DUO
+  DEVICE_PACKAGES := kmod-mt76x2 kmod-usb2 kmod-usb-ohci kmod-usb-storage-uas
+endef
+TARGET_DEVICES += wevo_air-duo
+
 define Device/wrtnode_wrtnode
   SOC := mt7620n
   IMAGE_SIZE := 16064k
