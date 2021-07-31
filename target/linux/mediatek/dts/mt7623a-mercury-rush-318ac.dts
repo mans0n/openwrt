@@ -2,9 +2,10 @@
 /dts-v1/;
 
 #include <dt-bindings/input/input.h>
-#include "mt7623.dtsi"
 // for 5.10:
-// #include "mt7623a.dtsi"
+#include "mt7623a.dtsi"
+// for 5.4:
+// #include "mt7623.dtsi"
 #include "mt6323.dtsi"
 
 / {
@@ -347,17 +348,15 @@
 	status = "okay";
 };
 
-// for 5.10:
-/*
+// comment out this node if using 5.4:
 &usb3 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&musb_pins>;
 	status = "okay";
 
-	dr_mode = "host";
+	usb-role-switch;
 
 	connector {
 		compatible = "usb-a-connector";
 	};
 };
-*/
