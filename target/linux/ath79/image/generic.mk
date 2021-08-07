@@ -48,6 +48,19 @@ define Build/cybertan-trx
 	-rm $@-empty.bin
 endef
 
+define Build/dongwon-header
+	dd if=$@ of=$@.new bs=4 count=1 2>/dev/null
+	dd if=/dev/zero of=$@.new bs=8 count=1 oflag=append conv=notrunc 2>/dev/null
+	dd if=$@ of=$@.new skip=8 iflag=skip_bytes oflag=append conv=notrunc 2>/dev/null
+	( \
+		header_crc="$$(dd if=$@.new bs=68 count=1 2>/dev/null | gzip -c | \
+			tail -c 8 | od -An -N4 -tx4 --endian little | tr -d ' \n')"; \
+		echo -ne "$$(echo $$header_crc | sed 's/../\\x&/g')" | \
+			dd of=$@.new bs=4 seek=1 conv=notrunc 2>/dev/null; \
+	)
+	mv $@.new $@
+endef
+
 define Build/edimax-headers
 	$(eval edimax_magic=$(word 1,$(1)))
 	$(eval edimax_model=$(word 2,$(1)))
@@ -988,6 +1001,18 @@ define Device/dlink_dir-859-a1
   SEAMA_SIGNATURE := wrgac37_dlink.2013gui_dir859
 endef
 TARGET_DEVICES += dlink_dir-859-a1
+
+define Device/dongwon_dw01-410h
+  SOC := ar9344
+  DEVICE_VENDOR := Dongwon T&I
+  DEVICE_MODEL := DW01-410H
+  DEVICE_PACKAGES := kmod-usb2
+  IMAGE_SIZE := 7872k
+  UIMAGE_NAME := ISQ-3000
+  KERNEL := $$(KERNEL) | dongwon-header
+  KERNEL_INITRAMFS := $$(KERNEL)
+endef
+TARGET_DEVICES += dongwon_dw01-410h
 
 define Device/elecom_wrc-1750ghbk2-i
   SOC := qca9563
