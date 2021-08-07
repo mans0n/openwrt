@@ -15,3 +15,4 @@ obj-$(CONFIG_MTD_SPLIT_WRGG_FW) += mtdsplit_wrgg.o
 obj-$(CONFIG_MTD_SPLIT_MINOR_FW) += mtdsplit_minor.o
 obj-$(CONFIG_MTD_SPLIT_JIMAGE_FW) += mtdsplit_jimage.o
 obj-$(CONFIG_MTD_SPLIT_ELF_FW) += mtdsplit_elf.o
+obj-$(CONFIG_MTD_SPLIT_DW_UIMAGE_FW) += mtdsplit_dw_uimage.o
