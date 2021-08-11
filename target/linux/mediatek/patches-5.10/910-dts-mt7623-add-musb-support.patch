@@ -1,10 +1,10 @@
 --- a/arch/arm/boot/dts/mt7623.dtsi
 +++ b/arch/arm/boot/dts/mt7623.dtsi
-@@ -903,6 +903,39 @@
- 		};
+@@ -585,6 +585,39 @@
+ 		status = "disabled";
  	};
  
-+	usb3: usb@11200000 {
++	usb0: usb@11200000 {
 +		compatible = "mediatek,mt7623-musb",
 +			     "mediatek,mtk-musb";
 +		reg = <0 0x11200000 0 0x1000>;
@@ -26,9 +26,9 @@
 +		#address-cells = <2>;
 +		#size-cells = <2>;
 +		ranges;
-+		status = "okay";
++		status = "disabled";
 +
-+		u2port2: usb-phy@1a1c4800 {
++		u2port2: usb-phy@11210800 {
 +			reg = <0 0x11210800 0 0x0100>;
 +			clocks = <&topckgen CLK_TOP_USB_PHY48M>;
 +			clock-names = "ref";
@@ -37,16 +37,19 @@
 +		};
 +	};
 +
- 	ethsys: syscon@1b000000 {
- 		compatible = "mediatek,mt7623-ethsys",
- 			     "mediatek,mt2701-ethsys",
+ 	audsys: clock-controller@11220000 {
+ 		compatible = "mediatek,mt7623-audsys",
+ 			     "mediatek,mt2701-audsys",
 --- a/arch/arm/boot/dts/mt7623a.dtsi
 +++ b/arch/arm/boot/dts/mt7623a.dtsi
-@@ -42,3 +42,7 @@
- &usb2 {
+@@ -35,6 +35,10 @@
+ 	clock-names = "ethif";
+ };
+ 
++&usb0 {
++	power-domains = <&scpsys MT7623A_POWER_DOMAIN_IFR_MSC>;
++};
++
+ &usb1 {
  	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
  };
-+
-+&usb3 {
-+	power-domains = <&scpsys MT7623A_POWER_DOMAIN_HIF>;
-+};

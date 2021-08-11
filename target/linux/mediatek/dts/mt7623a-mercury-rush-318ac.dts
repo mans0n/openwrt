@@ -349,7 +349,7 @@
 };
 
 // comment out this node if using 5.4:
-&usb3 {
+&usb0 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&musb_pins>;
 	status = "okay";
@@ -359,4 +359,8 @@
 	connector {
 		compatible = "usb-a-connector";
 	};
+};
+
+&u2phy1 {
+	status = "okay";
 };
