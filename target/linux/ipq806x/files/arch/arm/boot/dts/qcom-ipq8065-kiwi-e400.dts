@@ -1,0 +1,307 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+#include "qcom-ipq8065.dtsi"
+
+#include <dt-bindings/input/input.h>
+
+/ {
+	model = "Kisan Telecom KIWI-E400";
+	compatible = "kisan,kiwi-e400", "qcom,ipq8065", "qcom,ipq8064";
+
+	aliases {
+		ethernet0 = &gmac1;
+		ethernet1 = &gmac2;
+		ethernet2 = &gmac3;
+
+		led-boot = &led_power_green;
+		led-failsafe = &led_power_red;
+		led-running = &led_power_green;
+		led-upgrade = &led_power_red;
+		label-mac-device = &gmac1;
+	};
+
+	chosen {
+		bootargs = "console=ttyMSM0,115200n8 earlycon";
+		find-rootblock = "ubi.mtd=";
+		append-rootblock = "ubi.mtd=";
+	};
+
+	memory@42000000 {
+		device_type = "memory";
+		reg = <0x42000000 0x1e000000>;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		pinctrl-0 = <&led_pins>;
+		pinctrl-names = "default";
+
+		led_power_red: power-red {
+			label = "red:power";
+			gpios = <&qcom_pinmux 25 GPIO_ACTIVE_HIGH>;
+		};
+
+		led_power_green: power-green {
+			label = "green:power";
+			gpios = <&qcom_pinmux 26 GPIO_ACTIVE_HIGH>;
+		};
+
+		wlan2g {
+			label = "green:wlan2g";
+			gpios = <&qcom_pinmux 27 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "phy1tpt";
+		};
+
+		wlan5g {
+			label = "green:wlan5g";
+			gpios = <&qcom_pinmux 28 GPIO_ACTIVE_HIGH>;
+			linux,default-trigger = "phy0tpt";
+		};
+	};
+
+	keys {
+		compatible = "gpio-keys";
+		pinctrl-0 = <&button_pins>;
+		pinctrl-names = "default";
+
+		reset {
+			label = "reset";
+			gpios = <&qcom_pinmux 9 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+		};
+	};
+};
+
+&qcom_pinmux {
+	led_pins: led_pins {
+		mux {
+			pins = "gpio25", "gpio26", "gpio27", "gpio28";
+			function = "gpio";
+			drive-strength = <2>;
+			bias-pull-down;
+		};
+	};
+
+	button_pins: button_pins {
+		mux {
+			pins = "gpio9";
+			function = "gpio";
+			drive-strength = <2>;
+			bias-pull-up;
+		};
+	};
+
+	uart_pins: uart_pins {
+		mux {
+			pins = "gpio10", "gpio11";
+			function = "gsbi4";
+			drive-strength = <12>;
+			bias-disable;
+		};
+	};
+
+	pcie2_pins_alt: pcie2_pins_alt {
+		mux {
+			pins = "gpio55";
+			function = "gpio";
+			drive-strength = <12>;
+			bias-disable;
+			output-low;
+		};
+	};
+};
+
+&gsbi4_serial {
+	pinctrl-0 = <&uart_pins>;
+	pinctrl-names = "default";
+};
+
+&rpm {
+	pinctrl-0 = <&i2c4_pins>;
+	pinctrl-names = "default";
+};
+
+&adm_dma {
+	status = "okay";
+};
+
+&nand_controller {
+	status = "okay";
+
+	pinctrl-0 = <&nand_pins>;
+	pinctrl-names = "default";
+
+	nand@0 {
+		reg = <0>;
+		compatible = "qcom,nandcs";
+
+		nand-ecc-strength = <4>;
+		nand-bus-width = <8>;
+		nand-ecc-step-size = <512>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "uloader";
+				reg = <0x0 0xc80000>;
+				read-only;
+			};
+
+			partition@c80000 {
+				label = "u-boot";
+				reg = <0xc80000 0x80000>;
+				read-only;
+			};
+
+			partition@d00000 {
+				label = "env";
+				reg = <0xd00000 0x40000>;
+			};
+
+			mac: partition@d40000 {
+				label = "mac";
+				reg = <0xd40000 0x40000>;
+				read-only;
+			};
+
+			partition@d80000 {
+				label = "cal0";
+				reg = <0xd80000 0x80000>;
+				read-only;
+			};
+
+			partition@e00000 {
+				label = "cfg";
+				reg = <0xe00000 0x100000>;
+				read-only;
+			};
+
+			partition@f00000 {
+				label = "img0";
+				reg = <0xf00000 0x4000000>;
+			};
+
+			partition@4f00000 {
+				label = "img1";
+				reg = <0x4f00000 0x4000000>;
+			};
+
+			partition@8f00000 {
+				label = "fs";
+				reg = <0x8f00000 0x7100000>;
+			};
+		};
+	};
+};
+
+&mdio0 {
+	status = "okay";
+
+	pinctrl-0 = <&mdio0_pins>;
+	pinctrl-names = "default";
+
+	ethphy3: ethernet-phy@5 {
+		reg = <5>;
+		reset-gpios = <&qcom_pinmux 66 GPIO_ACTIVE_LOW>;
+	};
+
+	ethphy2: ethernet-phy@6 {
+		reg = <6>;
+		reset-gpios = <&qcom_pinmux 67 GPIO_ACTIVE_LOW>;
+	};
+
+	ethphy1: ethernet-phy@7 {
+		reg = <7>;
+		reset-gpios = <&qcom_pinmux 68 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&gmac1 {
+	status = "okay";
+
+	qcom,id = <1>;
+	phy-mode = "sgmii";
+	phy-handle = <&ethphy1>;
+
+	mtd-mac-address = <&mac 0x0>;
+	mtd-mac-address-increment = <0>;
+};
+
+&gmac2 {
+	status = "okay";
+
+	qcom,id = <2>;
+	phy-mode = "sgmii";
+	phy-handle = <&ethphy2>;
+
+	mtd-mac-address = <&mac 0x0>;
+	mtd-mac-address-increment = <1>;
+};
+
+&gmac3 {
+	status = "okay";
+
+	qcom,id = <3>;
+	phy-mode = "sgmii";
+	phy-handle = <&ethphy3>;
+
+	mtd-mac-address = <&mac 0x0>;
+	mtd-mac-address-increment = <2>;
+};
+
+&pcie0 {
+	status = "okay";
+
+	bridge@0,0 {
+		reg = <0x00000000 0 0 0 0>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+		ranges;
+
+		wifi@1,0 {
+			compatible = "qcom,ath10k";
+			reg = <0x00010000 0 0 0 0>;
+			qcom,ath10k-calibration-variant = "Kisan-KIWI-E400";
+		};
+	};
+};
+
+&pcie1 {
+	status = "okay";
+
+	bridge@0,0 {
+		reg = <0x00000000 0 0 0 0>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+		ranges;
+
+		wifi@1,0 {
+			compatible = "qcom,ath10k";
+			reg = <0x00010000 0 0 0 0>;
+			qcom,ath10k-calibration-variant = "Kisan-KIWI-E400";
+		};
+	};
+};
+
+&pcie2 {
+	status = "okay";
+
+	pinctrl-0 = <&pcie2_pins_alt>;
+	pinctrl-names = "default";
+	perst-gpio = <&qcom_pinmux 55 GPIO_ACTIVE_LOW>;
+
+	bridge@0,0 {
+		reg = <0x00000000 0 0 0 0>;
+		#address-cells = <3>;
+		#size-cells = <2>;
+		ranges;
+
+		wifi@1,0 {
+			compatible = "qcom,ath10k";
+			reg = <0x00010000 0 0 0 0>;
+			qcom,ath10k-calibration-variant = "Kisan-KIWI-E400";
+		};
+	};
+};

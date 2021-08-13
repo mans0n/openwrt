@@ -40,6 +40,17 @@ platform_do_upgrade() {
 		fi
 		nand_do_upgrade "$1"
 		;;
+	kisan,kiwi-e400)
+		mkdir -p /var/lock
+		if [ "$(fw_printenv -n actimg 2>/dev/null)" = "0" ]; then
+			fw_setenv actimg 1 || exit 1
+			CI_UBIPART="img1"
+		else
+			fw_setenv actimg 0 || exit 1
+			CI_UBIPART="img0"
+		fi
+		nand_do_upgrade "$1"
+		;;
 	linksys,ea7500-v1 |\
 	linksys,ea8500)
 		platform_do_upgrade_linksys "$1"

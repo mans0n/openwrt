@@ -157,6 +157,20 @@ define Device/edgecore_ecw5410
 endef
 TARGET_DEVICES += edgecore_ecw5410
 
+define Device/kisan_kiwi-e400
+	$(call Device/LegacyImage)
+	$(call Device/UbiFit)
+	DEVICE_VENDOR := Kisan Telecom
+	DEVICE_MODEL := KIWI-E400
+	SOC := qcom-ipq8065
+	BLOCKSIZE := 128k
+	PAGESIZE := 2048
+	UIMAGE_NAME := KIWI-E400-0.0.0
+	DEVICE_PACKAGES := ath10k-firmware-qca9984-ct ath10k-firmware-qca9887-ct
+	# DEVICE_PACKAGES += ipq-wifi-kisan_kiwi-e400
+endef
+TARGET_DEVICES += kisan_kiwi-e400
+
 define Device/linksys_ea7500-v1
 	$(call Device/LegacyImage)
 	DEVICE_VENDOR := Linksys

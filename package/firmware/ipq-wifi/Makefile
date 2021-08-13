@@ -40,6 +40,7 @@ ALLWIFIBOARDS:= \
 	ezviz_cs-w3-wd1200g-eup \
 	glinet_gl-ap1300 \
 	glinet_gl-s1300 \
+	kisan_kiwi-e400 \
 	linksys_ea8300 \
 	linksys_mr8300-v0 \
 	luma_wrtq-329acn \
@@ -72,10 +73,12 @@ define ipq-wifi-install-one
     $(call ipq-wifi-install-one-to,$(1),$(2),QCA4019/hw1.0),\
   $(if $(filter $(suffix $(1)),.QCA9888 .qca9888),\
     $(call ipq-wifi-install-one-to,$(1),$(2),QCA9888/hw2.0),\
+  $(if $(filter $(suffix $(1)),.QCA9889 .qca9889),\
+    $(call ipq-wifi-install-one-to,$(1),$(2),QCA9887/hw1.0),\
   $(if $(filter $(suffix $(1)),.QCA9984 .qca9984),\
     $(call ipq-wifi-install-one-to,$(1),$(2),QCA9984/hw1.0),\
     $(error Unrecognized board-file suffix '$(suffix $(1))' for '$(1)')\
-  )))
+  ))))
 
 endef
 # Blank line required at end of above define due to foreach context
@@ -108,7 +111,7 @@ Do not install it for any other device!
 endef
 
 # Add board name to ALLWIFIBOARDS
-# Place files in this directory as board-<devicename>.<qca4019|qca9888|qca9984>
+# Place files in this directory as board-<devicename>.<qca4019|qca9888|qca9889|qca9984>
 # Add $(eval $(call generate-ipq-wifi-package,<devicename>,<display name>))
 
 $(eval $(call generate-ipq-wifi-package,8dev_habanero-dvk,8devices Habanero DVK))
@@ -126,6 +129,7 @@ $(eval $(call generate-ipq-wifi-package,engenius_emr3500,EnGenius EMR3500))
 $(eval $(call generate-ipq-wifi-package,ezviz_cs-w3-wd1200g-eup,EZVIZ CS-W3-WD1200G EUP))
 $(eval $(call generate-ipq-wifi-package,glinet_gl-ap1300,GL.iNet GL-AP1300))
 $(eval $(call generate-ipq-wifi-package,glinet_gl-s1300,GL.iNet GL-S1300))
+$(eval $(call generate-ipq-wifi-package,kisan_kiwi-e400,Kisan Telecom KIWI-E400))
 $(eval $(call generate-ipq-wifi-package,linksys_ea8300,Linksys EA8300))
 $(eval $(call generate-ipq-wifi-package,linksys_mr8300-v0,Linksys MR8300))
 $(eval $(call generate-ipq-wifi-package,luma_wrtq-329acn,Luma WRTQ-329ACN))
