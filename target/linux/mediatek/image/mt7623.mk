@@ -55,6 +55,27 @@ define Device/bpi_bananapi-r2
 endef
 TARGET_DEVICES += bpi_bananapi-r2
 
+define Device/iptime_a8004ns-m-emmc
+  DEVICE_VENDOR := ipTIME
+  DEVICE_MODEL := A8004NS-M
+  DEVICE_VARIANT := eMMC
+  DEVICE_DTS := mt7623a-iptime-a8004ns-m-emmc
+  DEVICE_DTS_DIR := ../dts
+  DEVICE_PACKAGES := kmod-usb-ledtrig-usbport kmod-hwmon-gpiofan
+  # DEVICE_PACKAGES += kmod-fs-vfat kmod-nls-cp437 kmod-nls-iso8859-1
+  # DEVICE_PACKAGES += kmod-usb-ohci kmod-usb2 partx-utils mkf2fs e2fsprogs
+  # DEVICE_PACKAGES += kmod-mt7615e wpad-basic-wolfssl
+  KERNEL_NAME := zImage
+  KERNEL := kernel-bin | append-dtb | uImage none
+  # initramfs should be built with `TARGET_ROOTFS_INITRAMFS_SEPARATE` off
+  KERNEL_INITRAMFS := $$(KERNEL)
+  UIMAGE_NAME := a8004nm
+  # IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  # IMAGES := sysupgrade-emmc.bin.gz
+  # IMAGE/sysupgrade-emmc.bin.gz := sysupgrade-emmc | gzip | append-metadata
+endef
+TARGET_DEVICES += iptime_a8004ns-m-emmc
+
 define Device/mercury_rush-318ac
   DEVICE_VENDOR := Mercury
   DEVICE_MODEL := RUSH-318AC
