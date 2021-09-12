@@ -81,7 +81,7 @@ define Device/mercury_rush-318ac
   DEVICE_MODEL := RUSH-318AC
   DEVICE_DTS := mt7623a-mercury-rush-318ac
   DEVICE_DTS_DIR := ../dts
-  DEVICE_PACKAGES := kmod-mt7615e wpad-basic
+  DEVICE_PACKAGES := kmod-mt7615e wpad-basic-wolfssl
   KERNEL_NAME := zImage
   KERNEL := kernel-bin | append-dtb | uImage none
   # initramfs should be built with `TARGET_ROOTFS_INITRAMFS_SEPARATE` off

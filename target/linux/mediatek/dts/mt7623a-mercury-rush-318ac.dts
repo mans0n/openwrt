@@ -206,6 +206,7 @@
 			fixed-link {
 				speed = <1000>;
 				full-duplex;
+				pause;
 			};
 		};
 	};
@@ -330,6 +331,23 @@
 	status = "okay";
 };
 
+// comment out this node if using 5.4:
+&usb0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&musb_pins>;
+	status = "okay";
+
+	usb-role-switch;
+
+	connector {
+		compatible = "usb-a-connector";
+	};
+};
+
+&u2phy1 {
+	status = "okay";
+};
+
 &usb1 {
 	status = "okay";
 
@@ -345,22 +363,5 @@
 };
 
 &u3phy1 {
-	status = "okay";
-};
-
-// comment out this node if using 5.4:
-&usb0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&musb_pins>;
-	status = "okay";
-
-	usb-role-switch;
-
-	connector {
-		compatible = "usb-a-connector";
-	};
-};
-
-&u2phy1 {
 	status = "okay";
 };
