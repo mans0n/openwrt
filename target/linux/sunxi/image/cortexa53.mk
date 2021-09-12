@@ -76,6 +76,15 @@ define Device/pine64_pine64-plus
 endef
 TARGET_DEVICES += pine64_pine64-plus
 
+define Device/pine64_pinephone-1.2
+  DEVICE_VENDOR := Pine64
+  DEVICE_MODEL := PinePhone
+  DEVICE_VARIANT := (1.2)
+  DEVICE_PACKAGES := kmod-rtl8723bs rtl8723bs-firmware
+  $(Device/sun50i-a64)
+endef
+TARGET_DEVICES += pine64_pinephone-1.2
+
 define Device/pine64_sopine-baseboard
   DEVICE_VENDOR := Pine64
   DEVICE_MODEL := SoPine

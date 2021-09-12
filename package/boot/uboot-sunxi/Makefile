@@ -280,6 +280,15 @@ define U-Boot/pine64_plus
   ATF:=a64
 endef
 
+define U-Boot/pinephone
+  BUILD_SUBTARGET:=cortexa53
+  NAME:=Pine64 PinePhone
+  BUILD_DEVICES:=pine64_pinephone-1.2
+  DEPENDS:=+PACKAGE_u-boot-pinephone:arm-trusted-firmware-sunxi-a64
+  UENV:=a64
+  ATF:=a64
+endef
+
 define U-Boot/bananapi_m2_plus_h3
   BUILD_SUBTARGET:=cortexa7
   NAME:=Bananapi M2 Plus H3
@@ -370,6 +379,7 @@ UBOOT_TARGETS := \
 	pangolin \
 	pine64_plus \
 	sopine_baseboard \
+	pinephone \
 	orangepi_zero_plus \
 	libretech_all_h3_cc_h5
 
