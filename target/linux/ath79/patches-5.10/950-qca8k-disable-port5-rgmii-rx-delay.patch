@@ -1,0 +1,11 @@
+--- a/drivers/net/dsa/qca8k.c
++++ b/drivers/net/dsa/qca8k.c
+@@ -1448,7 +1448,7 @@ qca8k_phylink_mac_config(struct dsa_swit
+ 		 * This is enabled through PORT5_PAD_CTRL for all ports,
+ 		 * rather than individual port registers.
+ 		 */
+-		if (priv->switch_id == QCA8K_ID_QCA8337)
++		if (0 && priv->switch_id == QCA8K_ID_QCA8337)
+ 			qca8k_write(priv, QCA8K_REG_PORT5_PAD_CTRL,
+ 				    QCA8K_PORT_PAD_RGMII_RX_DELAY_EN);
+ 		break;
