@@ -87,6 +87,10 @@
 	};
 };
 
+&gmac0 {
+	phy-mode = "trgmii";
+};
+
 &switch0 {
 	ports {
 		port@0 {
@@ -112,6 +116,14 @@
 		port@4 {
 			status = "okay";
 			label = "lan1";
+		};
+
+		port@6 {
+			phy-mode = "trgmii";
+
+			fixed-link {
+				pause;
+			};
 		};
 	};
 };
